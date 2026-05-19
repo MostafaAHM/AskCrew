@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "43120035722",
+    "project_id": "ask-crew",
+    "storage_bucket": "ask-crew.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:43120035722:android:4c6431f2c7b1ed6cd1aa73",
+        "android_client_info": {
+          "package_name": "com.askcrew"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiXhWehGbaQNTibQDM7Lw0wR9tpGxW1aA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

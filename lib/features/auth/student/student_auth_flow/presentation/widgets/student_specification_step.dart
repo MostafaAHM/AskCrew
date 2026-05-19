@@ -1,0 +1,239 @@
+import 'package:aflam/core/app_config/app_colors.dart';
+import 'package:aflam/core/extensions/space_extension.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../cubit/student_onboarding_cubit.dart';
+import '../cubit/student_onboarding_state.dart';
+import 'specification_checkbox.dart';
+import 'institute_checkbox.dart';
+
+class StudentSpecificationStep extends StatefulWidget {
+  const StudentSpecificationStep({super.key});
+
+  @override
+  State<StudentSpecificationStep> createState() =>
+      _StudentSpecificationStepState();
+}
+
+class _StudentSpecificationStepState extends State<StudentSpecificationStep> {
+  bool _isVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          _isVisible = true;
+        });
+      }
+    });
+  }
+
+  String _formatName(String name) {
+    if (name.isEmpty) return '';
+    return name
+        .split('_')
+        .map((word) {
+          if (word.isEmpty) return word;
+          return word[0].toUpperCase() + word.substring(1).toLowerCase();
+        })
+        .join(' ');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<StudentOnboardingCubit, StudentOnboardingState>(
+      builder: (context, state) {
+        if (state is! StudentOnboardingInProgress) {
+          return const SizedBox.shrink();
+        }
+
+        final specifications = state.data.specifications;
+
+        return AnimatedOpacity(
+          duration: const Duration(milliseconds: 320),
+          curve: Curves.easeOut,
+          opacity: _isVisible ? 1 : 0,
+          child: AnimatedSlide(
+            duration: const Duration(milliseconds: 320),
+            curve: Curves.easeOut,
+            offset: _isVisible ? Offset.zero : const Offset(0, 0.04),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  24.height,
+                  Text(
+                    'selectYourInstituteCollege'.tr(),
+                    style: TextStyle(
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.lightTText,
+                    ),
+                  ),
+                  8.height,
+                  Text(
+                    'selectYourOwnInstituteOrCollege'.tr(),
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: AppColors.greyText,
+                    ),
+                  ),
+                  24.height,
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12.w,
+                      mainAxisSpacing: 12.h,
+                      childAspectRatio: 2.8,
+                    ),
+                    itemCount: state.data.institutes.length,
+                    itemBuilder: (context, index) {
+                      final institute = state.data.institutes[index];
+                      return InstituteCheckbox(
+                        label: institute.name,
+                        isSelected: institute.isSelected,
+                        onChanged: (value) {
+                          context
+                              .read<StudentOnboardingCubit>()
+                              .toggleInstitute(institute.id);
+                        },
+                      );
+                    },
+                  ),
+                  40.height,
+                  Text(
+                    'chooseYourSpecification'.tr(),
+                    style: TextStyle(
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.lightTText,
+                    ),
+                  ),
+                  8.height,
+                  Text(
+                    'tellUsYourAreaOfExpertise'.tr(),
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: AppColors.greyText,
+                    ),
+                  ),
+                  32.height,
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: specifications.length,
+                    itemBuilder: (context, index) {
+                      final category = specifications[index];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              context
+                                  .read<StudentOnboardingCubit>()
+                                  .toggleCategoryExpanded(
+                                    category.categoryName,
+                                  );
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 12.h,
+                                horizontal: 16.w,
+                              ),
+                              margin: EdgeInsets.only(bottom: 12.h),
+                              decoration: BoxDecoration(
+                                color: AppColors.lightBGColor,
+                                borderRadius: BorderRadius.circular(8.r),
+                                border: Border.all(
+                                  color: AppColors.primaryColor.withOpacity(
+                                    0.1,
+                                  ),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    _formatName(category.categoryName),
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      color: AppColors.lightTText,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Icon(
+                                    category.isExpanded
+                                        ? Icons.keyboard_arrow_up
+                                        : Icons.keyboard_arrow_down,
+                                    color: AppColors.primaryColor,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          if (category.isExpanded)
+                            GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 12.w,
+                                    mainAxisSpacing: 12.h,
+                                    childAspectRatio: 2.5,
+                                  ),
+                              padding: EdgeInsets.only(bottom: 16.h),
+                              itemCount: category.items.length,
+                              itemBuilder: (context, itemIndex) {
+                                final spec = category.items[itemIndex];
+                                return TweenAnimationBuilder<double>(
+                                  tween: Tween(begin: 20, end: 0),
+                                  duration: Duration(
+                                    milliseconds: 150 + (itemIndex * 30),
+                                  ),
+                                  curve: Curves.easeOut,
+                                  builder: (context, value, child) {
+                                    return Transform.translate(
+                                      offset: Offset(0, value),
+                                      child: Opacity(
+                                        opacity: 1 - (value / 20).clamp(0, 1),
+                                        child: child,
+                                      ),
+                                    );
+                                  },
+                                  child: SpecificationCheckbox(
+                                    label: _formatName(spec.name),
+                                    isSelected: spec.isSelected,
+                                    onChanged: (value) {
+                                      context
+                                          .read<StudentOnboardingCubit>()
+                                          .toggleSpecification(
+                                            category.categoryName,
+                                            spec.id,
+                                          );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                  24.height,
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
