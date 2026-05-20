@@ -70,19 +70,12 @@ class FindTalentStudentScreen extends StatelessWidget {
                           return _ProfileCard(
                             talent: talent,
                             onTap: () {
-                              if (isTalent) {
+                              final userId = int.tryParse(talent.id);
+                              if (userId != null) {
                                 context.pushNamed(
-                                  Routes.talentProfile,
-                                  extra: TalentProfileArgs(id: talent.id),
+                                  Routes.userProfile,
+                                  extra: userId,
                                 );
-                              } else {
-                                final userId = int.tryParse(talent.id);
-                                if (userId != null) {
-                                  context.pushNamed(
-                                    Routes.userProfile,
-                                    extra: userId,
-                                  );
-                                }
                               }
                             },
                           );
