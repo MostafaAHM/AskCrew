@@ -369,6 +369,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       planName = planName[0].toUpperCase() + planName.substring(1);
     }
 
+    // Extract additional profile data
+    final wallet = userData.wallet;
+    final points = userData.points;
+    final views = profile?.views ?? 0;
+    final totalBookings = profile?.totalBookings ?? 0;
+    final topWorkView = profile?.topWorkView ?? 0;
+    final planFeatures = profile?.plan?['features'] as List<dynamic>?;
+    final dateJoined = userData.dateJoined;
+
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Column(

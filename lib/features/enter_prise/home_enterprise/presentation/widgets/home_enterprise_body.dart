@@ -285,8 +285,8 @@ class HomeEnterpriseBody extends StatelessWidget {
                                     final userId = int.tryParse(talent.id);
                                     if (userId != null) {
                                       context.pushNamed(
-                                        Routes.userProfile,
-                                        extra: userId,
+                                        Routes.talentProfile,
+                                        extra: TalentProfileArgs(id: talent.id),
                                       );
                                     }
                                   },
