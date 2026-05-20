@@ -29,6 +29,10 @@ class UserInfoSkillsCard extends StatefulWidget {
   final int? approvedApplications;
   final String? planName;
   final bool isOwner;
+  final int? views;
+  final int? totalBookings;
+  final int? topWorkView;
+  final Map<String, dynamic>? plan;
 
   const UserInfoSkillsCard({
     super.key,
@@ -47,6 +51,10 @@ class UserInfoSkillsCard extends StatefulWidget {
     this.approvedApplications,
     this.planName,
     this.isOwner = false,
+    this.views,
+    this.totalBookings,
+    this.topWorkView,
+    this.plan,
   });
 
   @override
@@ -101,7 +109,8 @@ class _UserInfoSkillsCardState extends State<UserInfoSkillsCard> {
                   : widget.experienceLevel!.tr(),
             ),
           ],
-          if (widget.isOwner || (widget.planName != null && widget.planName!.isNotEmpty)) ...[
+          if (widget.isOwner ||
+              (widget.planName != null && widget.planName!.isNotEmpty)) ...[
             Divider(height: 1, thickness: 1.5, color: Colors.grey[400]),
             InfoRowWidget(
               icon: Icons.star_outline,
@@ -146,6 +155,75 @@ class _UserInfoSkillsCardState extends State<UserInfoSkillsCard> {
                     )
                   : null,
             ),
+          ],
+          // Plan Features Section
+          if (widget.plan != null &&
+              widget.plan!['features'] != null &&
+              (widget.plan!['features'] as List).isNotEmpty) ...[
+            SizedBox(height: 16.h),
+            Text(
+              'plan_features'.tr(),
+              style: TextStyle(
+                color: AppColors.primaryColor,
+                fontSize: 19.sp,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            SizedBox(height: 12.h),
+            ...((widget.plan!['features'] as List).map<Widget>((feature) {
+              final featureMap = feature as Map<String, dynamic>;
+              final featureKey =
+                  featureMap['feature_key_display']?.toString() ??
+                  featureMap['feature_key']?.toString() ??
+                  '';
+              final limit = featureMap['limit'];
+              final limitText = limit != null ? ' ($limit)' : ' (Unlimited)';
+              return Column(
+                children: [
+                  InfoRowWidget(
+                    icon: Icons.check_circle_outline,
+                    text: '$featureKey$limitText',
+                  ),
+                  Divider(height: 1, thickness: 1.5, color: Colors.grey[400]),
+                ],
+              );
+            }).toList()),
+          ],
+          // Statistics Section
+          if ((widget.views != null && widget.views! > 0) ||
+              (widget.totalBookings != null && widget.totalBookings! > 0) ||
+              (widget.topWorkView != null && widget.topWorkView! > 0)) ...[
+            SizedBox(height: 16.h),
+            Text(
+              'statistics'.tr(),
+              style: TextStyle(
+                color: AppColors.primaryColor,
+                fontSize: 19.sp,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            SizedBox(height: 12.h),
+            if (widget.views != null && widget.views! > 0) ...[
+              InfoRowWidget(
+                icon: Icons.visibility_outlined,
+                text: '${'views'.tr()}: ${widget.views}',
+              ),
+              Divider(height: 1, thickness: 1.5, color: Colors.grey[400]),
+            ],
+            if (widget.totalBookings != null && widget.totalBookings! > 0) ...[
+              InfoRowWidget(
+                icon: Icons.bookmark_border_outlined,
+                text: '${'total_bookings'.tr()}: ${widget.totalBookings}',
+              ),
+              Divider(height: 1, thickness: 1.5, color: Colors.grey[400]),
+            ],
+            if (widget.topWorkView != null && widget.topWorkView! > 0) ...[
+              InfoRowWidget(
+                icon: Icons.star_border_outlined,
+                text: '${'top_work_view'.tr()}: ${widget.topWorkView}',
+              ),
+              Divider(height: 1, thickness: 1.5, color: Colors.grey[400]),
+            ],
           ],
           if ((widget.jobApplications != null && widget.jobApplications! > 0) ||
               (widget.approvedApplications != null &&

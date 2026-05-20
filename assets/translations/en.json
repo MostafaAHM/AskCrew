@@ -663,5 +663,11 @@
   "About": "About",
   "enterprise_my_workshop": "My Workshop",
   "enterprise_my_job": "My Jobs",
-  "enterprise_my_products": "My Products"
+  "enterprise_my_products": "My Products",
+  "statistics": "Statistics",
+  "views": "Views",
+  "total_bookings": "Total Bookings",
+  "top_work_view": "Top Work View",
+  "plan_features": "Plan Features",
+  "roles": "Roles"
 }

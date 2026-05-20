@@ -26,6 +26,7 @@ import '../../../../../config/routes/routes.dart';
 import '../cubit/home_enterprise_cubit.dart';
 import '../cubit/home_enterprise_state.dart';
 import 'enterprise_action_buttons.dart';
+import '../../../../shared/talent_profile/presentation/screens/talent_profile_args.dart';
 
 class HomeEnterpriseBody extends StatelessWidget {
   const HomeEnterpriseBody({super.key});
@@ -284,8 +285,8 @@ class HomeEnterpriseBody extends StatelessWidget {
                                     final userId = int.tryParse(talent.id);
                                     if (userId != null) {
                                       context.pushNamed(
-                                        Routes.userProfile,
-                                        extra: userId,
+                                        Routes.talentProfile,
+                                        extra: TalentProfileArgs(id: talent.id),
                                       );
                                     }
                                   },

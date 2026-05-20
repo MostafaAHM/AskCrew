@@ -13,6 +13,11 @@ class TalentProfileModel {
   final String location;
   final String specialization;
   final List<TalentWorkModel> works;
+  final int? views;
+  final int? totalBookings;
+  final int? topWorkView;
+  final Map<String, dynamic>? plan;
+  final List<Map<String, dynamic>>? roles;
 
   const TalentProfileModel({
     required this.id,
@@ -27,6 +32,11 @@ class TalentProfileModel {
     required this.location,
     required this.specialization,
     this.works = const [],
+    this.views,
+    this.totalBookings,
+    this.topWorkView,
+    this.plan,
+    this.roles,
   });
 
   static String? _specToString(dynamic spec) {
@@ -101,6 +111,13 @@ class TalentProfileModel {
           '${json['profile']?['city'] ?? ''}, ${json['profile']?['country'] ?? ''}',
       specialization: specStr,
       works: worksList,
+      views: json['profile']?['views'],
+      totalBookings: json['profile']?['total_bookings'],
+      topWorkView: json['profile']?['top_work_view'],
+      plan: json['profile']?['plan'],
+      roles: json['profile']?['roles'] != null
+          ? List<Map<String, dynamic>>.from(json['profile']['roles'])
+          : null,
     );
   }
 }

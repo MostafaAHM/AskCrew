@@ -111,6 +111,157 @@ class TalentProfileScreen extends StatelessWidget {
                         text: profile.specialization,
                       ),
                       32.verticalSpace,
+                      // Statistics Section
+                      if (profile.views != null && profile.views! > 0 ||
+                          profile.totalBookings != null &&
+                              profile.totalBookings! > 0 ||
+                          profile.topWorkView != null &&
+                              profile.topWorkView! > 0) ...[
+                        Text(
+                          'statistics'.tr(),
+                          style: TextStyle(
+                            color: AppColors.secondaryColor,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        16.verticalSpace,
+                        if (profile.views != null && profile.views! > 0)
+                          InfoRow(
+                            icon: Icons.visibility_outlined,
+                            text: '${'views'.tr()}: ${profile.views}',
+                          ),
+                        if (profile.totalBookings != null &&
+                            profile.totalBookings! > 0)
+                          InfoRow(
+                            icon: Icons.bookmark_border_outlined,
+                            text:
+                                '${'total_bookings'.tr()}: ${profile.totalBookings}',
+                          ),
+                        if (profile.topWorkView != null &&
+                            profile.topWorkView! > 0)
+                          InfoRow(
+                            icon: Icons.star_border_outlined,
+                            text:
+                                '${'top_work_view'.tr()}: ${profile.topWorkView}',
+                          ),
+                        32.verticalSpace,
+                      ],
+                      // Plan Features Section
+                      if (profile.plan != null &&
+                          profile.plan!['features'] != null &&
+                          (profile.plan!['features'] as List).isNotEmpty) ...[
+                        Text(
+                          'plan_features'.tr(),
+                          style: TextStyle(
+                            color: AppColors.secondaryColor,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        16.verticalSpace,
+                        ...((profile.plan!['features'] as List).map<Widget>((
+                          feature,
+                        ) {
+                          final featureMap = feature as Map<String, dynamic>;
+                          final featureKey =
+                              featureMap['feature_key_display']?.toString() ??
+                              featureMap['feature_key']?.toString() ??
+                              '';
+                          final limit = featureMap['limit'];
+                          final limitText = limit != null
+                              ? ' ($limit)'
+                              : ' (Unlimited)';
+                          return InfoRow(
+                            icon: Icons.check_circle_outline,
+                            text: '$featureKey$limitText',
+                          );
+                        }).toList()),
+                        32.verticalSpace,
+                      ],
+                      32.verticalSpace,
+                      // Roles Section
+                      if (profile.roles != null &&
+                          profile.roles!.isNotEmpty) ...[
+                        Text(
+                          'roles'.tr(),
+                          style: TextStyle(
+                            color: AppColors.secondaryColor,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        16.verticalSpace,
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 12.w,
+                                mainAxisSpacing: 12.h,
+                                childAspectRatio: 0.7,
+                              ),
+                          itemCount: profile.roles!.length,
+                          itemBuilder: (context, index) {
+                            final role = profile.roles![index];
+                            final content =
+                                role['content'] as Map<String, dynamic>?;
+                            final posterUrl = content?['poster'] as String?;
+                            final roleName = role['role'] as String? ?? '';
+                            final contentName =
+                                content?['name'] as String? ?? '';
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (posterUrl != null && posterUrl.isNotEmpty)
+                                  Expanded(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8.r),
+                                      child: Image.network(
+                                        posterUrl,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                              return Container(
+                                                color: Colors.grey[300],
+                                                child: Icon(
+                                                  Icons.broken_image,
+                                                  size: 40.sp,
+                                                ),
+                                              );
+                                            },
+                                      ),
+                                    ),
+                                  ),
+                                8.verticalSpace,
+                                Text(
+                                  roleName,
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  contentName,
+                                  style: TextStyle(
+                                    fontSize: 10.sp,
+                                    color: Colors.grey[600],
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        32.verticalSpace,
+                      ],
+                      32.verticalSpace,
                       if (profile.works.isNotEmpty) ...[
                         Text(
                           'talent.profile.works'.tr(), // "Works" / "الأعمال"
