@@ -30,8 +30,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  alice: ^1.0.0-dev.12
-  alice_dio: ^1.0.4
   cached_network_image: ^3.3.1
   carousel_slider: ^5.0.0
   country_code_picker: ^3.1.0

@@ -1,7 +1,4 @@
 import 'package:aflam/core/network/extensions.dart';
-import 'package:alice/model/alice_configuration.dart';
-import 'package:alice_dio/alice_dio_adapter.dart';
-import 'package:alice/alice.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:dio/dio.dart';
@@ -9,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
-import '../../config/routes/app_router.dart';
 import '../../config/routes/routes.dart';
 import '../app_config/app_urls.dart';
 import '../app_config/constants.dart';
@@ -25,15 +21,6 @@ class DioService implements NetworkService {
   late Dio _dio;
   final CookieJar cookieJar;
   late CustomInterceptor _customInterceptor;
-
-  static final Alice alice = Alice(
-    configuration: AliceConfiguration(
-      showShareButton: true,
-      navigatorKey: AppRouter.appNavigatorKey,
-      showInspectorOnShake: kDebugMode,
-      showNotification: false,
-    ),
-  );
 
   DioService({required this.cookieJar}) {
     _initDio();
@@ -55,9 +42,6 @@ class DioService implements NetworkService {
     _dio.interceptors.add(CookieManager(cookieJar));
 
     if (kDebugMode) {
-      final aliceDioAdapter = AliceDioAdapter();
-      alice.addAdapter(aliceDioAdapter);
-      _dio.interceptors.add(aliceDioAdapter);
       _dio.interceptors.add(
         PrettyDioLogger(
           requestHeader: true,
