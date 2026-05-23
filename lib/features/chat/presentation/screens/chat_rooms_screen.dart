@@ -15,6 +15,12 @@ import '../../data/model/chat_room_model.dart';
 import '../cubit/chat_cubit.dart';
 import 'chat_screen.dart';
 
+String? _convertToString(dynamic value) {
+  if (value == null) return null;
+  if (value is String) return value;
+  return value.toString();
+}
+
 class ChatRoomsScreen extends StatelessWidget {
   const ChatRoomsScreen({super.key});
 
@@ -205,6 +211,8 @@ class _ChatRoomTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentUser = UserHelper.userNotifier.value;
+
+    // Get the other user - participants are now required (non-nullable)
     final otherUser =
         currentUser != null && room.participant1.id == currentUser.id
         ? room.participant2
@@ -222,7 +230,9 @@ class _ChatRoomTile extends StatelessWidget {
                 roomId: room.id,
                 roomName: otherUser.fullname,
                 otherUserImage: otherUser.profilePhoto,
-                specification: otherUser.profile?.specification,
+                specification: _convertToString(
+                  otherUser.profile?.specification,
+                ),
                 otherUser: otherUser,
               ),
             ),
@@ -244,7 +254,9 @@ class _ChatRoomTile extends StatelessWidget {
               backgroundColor: Colors.grey[300],
               child: otherUser.profilePhoto == null
                   ? Text(
-                      otherUser.fullname[0].toUpperCase(),
+                      otherUser.fullname.isNotEmpty
+                          ? otherUser.fullname[0].toUpperCase()
+                          : '?',
                       style: TextStyle(
                         color: Colors.grey[700],
                         fontSize: 20.sp,
@@ -263,7 +275,9 @@ class _ChatRoomTile extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        otherUser.fullname,
+                        otherUser.fullname.isNotEmpty
+                            ? otherUser.fullname
+                            : 'Unknown User',
                         style: TextStyle(
                           color: const Color(0xFF333333),
                           fontSize: 16.sp,

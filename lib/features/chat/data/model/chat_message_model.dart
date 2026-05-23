@@ -24,7 +24,7 @@ class ChatMessageModel extends Equatable {
     if (json['sender'] is int) {
       senderId = json['sender'];
     } else if (json['sender'] is Map) {
-      senderId = json['sender']['id'] ?? 0;
+      senderId = json['sender']['id'] is int ? json['sender']['id'] : 0;
     }
 
     List<String>? filesList;
@@ -37,24 +37,25 @@ class ChatMessageModel extends Equatable {
                 return e;
               } else if (e is Map) {
                 // Try different possible field names
-                if (e['file'] != null) {
-                  return e['file'].toString();
-                } else if (e['url'] != null) {
-                  return e['url'].toString();
-                } else if (e['path'] != null) {
-                  return e['path'].toString();
-                } else if (e['file_path'] != null) {
-                  return e['file_path'].toString();
+                if (e['file'] != null && e['file'] is String) {
+                  return e['file'];
+                } else if (e['url'] != null && e['url'] is String) {
+                  return e['url'];
+                } else if (e['path'] != null && e['path'] is String) {
+                  return e['path'];
+                } else if (e['file_path'] != null && e['file_path'] is String) {
+                  return e['file_path'];
                 } else {
                   // If it's a map but no known field, try to get the first value
                   final values = e.values.toList();
-                  if (values.isNotEmpty) {
-                    return values.first.toString();
+                  if (values.isNotEmpty && values.first is String) {
+                    return values.first;
                   }
                 }
               }
               return e.toString();
             })
+            .cast<String>()
             .where((url) => url.isNotEmpty && url != 'null')
             .toList();
         // Remove duplicates
@@ -65,13 +66,17 @@ class ChatMessageModel extends Equatable {
     }
 
     return ChatMessageModel(
-      id: json['id'] ?? 0,
-      roomId: json['room'] ?? 0,
+      id: json['id'] is int ? json['id'] : 0,
+      roomId: json['room'] is int ? json['room'] : 0,
       senderId: senderId,
-      message: json['content'] ?? json['message'] ?? '',
+      message: json['content'] is String
+          ? json['content']
+          : (json['message'] is String ? json['message'] : ''),
       files: filesList,
-      isRead: json['is_read'] ?? false,
-      createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
+      isRead: json['is_read'] is bool ? json['is_read'] : false,
+      createdAt: json['created_at'] is String
+          ? DateTime.tryParse(json['created_at']) ?? DateTime.now()
+          : DateTime.now(),
     );
   }
 

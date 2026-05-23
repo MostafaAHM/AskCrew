@@ -43,30 +43,23 @@ class _SplashViewState extends State<SplashView>
       duration: const Duration(milliseconds: 2800),
     );
 
-    _logoSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, -1),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.75, curve: Curves.easeOutQuint),
-      ),
-    );
+    _logoSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, -1), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.0, 0.75, curve: Curves.easeOutQuint),
+          ),
+        );
 
-    _textSlideAnimation = Tween<Offset>(
-      begin: const Offset(-1, 0),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.55, 1.0, curve: Curves.easeOutQuint),
-      ),
-    );
+    _textSlideAnimation =
+        Tween<Offset>(begin: const Offset(-1, 0), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.55, 1.0, curve: Curves.easeOutQuint),
+          ),
+        );
 
-    _textOpacity = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(
+    _textOpacity = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.55, 1.0, curve: Curves.easeIn),
@@ -92,9 +85,7 @@ class _SplashViewState extends State<SplashView>
       );
 
       /// مهم جدًا
-      await remoteConfig.setDefaults({
-        'app_enabled': true,
-      });
+      await remoteConfig.setDefaults({'app_enabled': true});
 
       await remoteConfig.fetch();
       await remoteConfig.activate();
@@ -104,9 +95,8 @@ class _SplashViewState extends State<SplashView>
 
       if (!appEnabled) {
         if (!mounted) return;
-       context.go(Routes.appLocked);
-return;
-
+        context.go(Routes.appLocked);
+        return;
       }
 
       /// 🔑 TOKEN
@@ -183,10 +173,7 @@ return;
       body: Stack(
         children: [
           SizedBox.expand(
-            child: Image.asset(
-              AppIcons.backgroundPNG,
-              fit: BoxFit.fitHeight,
-            ),
+            child: Image.asset(AppIcons.backgroundPNG, fit: BoxFit.fitHeight),
           ),
           Container(color: const Color(0x8C000000)),
           Center(
@@ -195,10 +182,7 @@ return;
               children: [
                 SlideTransition(
                   position: _logoSlideAnimation,
-                  child: Image.asset(
-                    AppIcons.splash,
-                    width: 180.w,
-                  ),
+                  child: Image.asset(AppIcons.splash, width: 180.w),
                 ),
                 FadeTransition(
                   opacity: _textOpacity,
@@ -213,9 +197,18 @@ return;
                           fontFamily: 'Poppins',
                         ),
                         children: const [
-                          TextSpan(text: 'Ask ', style: TextStyle(color: Colors.white)),
-                          TextSpan(text: 'C', style: TextStyle(color: AppColors.secondaryColor)),
-                          TextSpan(text: 'rew', style: TextStyle(color: Colors.white)),
+                          TextSpan(
+                            text: 'Ask ',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          TextSpan(
+                            text: 'C',
+                            style: TextStyle(color: AppColors.secondaryColor),
+                          ),
+                          TextSpan(
+                            text: 'rew',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ],
                       ),
                     ),

@@ -80,10 +80,7 @@ class _PlansScreenState extends State<PlansScreen> {
                         Navigator.of(context).pop(); // pop plans screen
                       },
                       onPaymentCancel: () {
-                        AppMessages.showError(
-                          context,
-                          'paymentCancelled'.tr(),
-                        );
+                        AppMessages.showError(context, 'paymentCancelled'.tr());
                       },
                     ),
                   ),
@@ -178,8 +175,7 @@ class _PlansScreenState extends State<PlansScreen> {
                       isSelected:
                           _selectedDuration == SubscriptionDuration.monthly,
                       onTap: () => setState(
-                        () =>
-                            _selectedDuration = SubscriptionDuration.monthly,
+                        () => _selectedDuration = SubscriptionDuration.monthly,
                       ),
                     ),
                   ),
@@ -191,8 +187,7 @@ class _PlansScreenState extends State<PlansScreen> {
                       isSelected:
                           _selectedDuration == SubscriptionDuration.biannual,
                       onTap: () => setState(
-                        () =>
-                            _selectedDuration = SubscriptionDuration.biannual,
+                        () => _selectedDuration = SubscriptionDuration.biannual,
                       ),
                     ),
                   ),
@@ -218,8 +213,7 @@ class _PlansScreenState extends State<PlansScreen> {
         // ─── Scrollable Plan Cards ───────────────────────────────────────────
         Expanded(
           child: ListView.separated(
-            padding:
-                EdgeInsets.fromLTRB(20.w, 4.h, 20.w, bottomInset),
+            padding: EdgeInsets.fromLTRB(20.w, 4.h, 20.w, bottomInset),
             physics: const BouncingScrollPhysics(),
             itemCount: displayPlans.length,
             separatorBuilder: (_, __) => 16.verticalSpace,

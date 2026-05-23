@@ -6,11 +6,11 @@ class AllTransactionItem {
   final int id;
   final String amount;
   final String createdAt;
-  final bool isWithdraw;   // false = deposit/payment, true = collect request
-  final String? status;    // only for withdraw: pending / approved / rejected
-  final String? source;    // only for withdraw: wallet / points
+  final bool isWithdraw; // false = deposit/payment, true = collect request
+  final String? status; // only for withdraw: pending / approved / rejected
+  final String? source; // only for withdraw: wallet / points
   final String? description; // only for payments
-  final String? currency;    // only for payments
+  final String? currency; // only for payments
 
   const AllTransactionItem({
     required this.id,

@@ -359,7 +359,7 @@ class _WorkEnterpriseBodyWidgetState extends State<WorkEnterpriseBodyWidget>
 
                     return Positioned(
                       right: 12.w,
-                      bottom: 130.h,
+                      bottom: 120.h,
                       child: AnimatedSlideIn(
                         index: 3,
                         controller: _animationController,

@@ -39,35 +39,32 @@ class AskQuestionFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 120.h, right: 12.w),
-      child: Material(
-        color: orange,
-        elevation: 5,
+    return Material(
+      color: orange,
+      elevation: 5,
+      borderRadius: borderRadius,
+      child: InkWell(
         borderRadius: borderRadius,
-        child: InkWell(
-          borderRadius: borderRadius,
-          onTap: () {
-            final cubit = context.read<QuestionsCubit>();
-            showModalBottomSheet(
-              context: context,
-              useRootNavigator: true,
-              isScrollControlled: true,
-              backgroundColor: Colors.transparent,
-              builder: (sheetContext) {
-                return BlocProvider.value(
-                  value: cubit,
-                  child: const AskQuestionBottomSheet(),
-                );
-              },
-            );
-          },
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
-            child: Text(
-              'ask_new_question'.tr(),
-              style: FontStyles.headline16.copyWith(color: Colors.white),
-            ),
+        onTap: () {
+          final cubit = context.read<QuestionsCubit>();
+          showModalBottomSheet(
+            context: context,
+            useRootNavigator: true,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (sheetContext) {
+              return BlocProvider.value(
+                value: cubit,
+                child: const AskQuestionBottomSheet(),
+              );
+            },
+          );
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+          child: Text(
+            'ask_new_question'.tr(),
+            style: FontStyles.headline16.copyWith(color: Colors.white),
           ),
         ),
       ),
@@ -89,12 +86,20 @@ class PostJobFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 120.h, right: 12.w),
+    return Material(
+      color: orange,
+      elevation: 5,
+      borderRadius: borderRadius,
       child: InkWell(
         borderRadius: borderRadius,
         onTap: onTap,
-        child: Image.asset(AppIcons.addCommunity, width: 60.w, height: 60.h),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+          child: Text(
+            'add_job'.tr(),
+            style: FontStyles.headline16.copyWith(color: Colors.white),
+          ),
+        ),
       ),
     );
   }

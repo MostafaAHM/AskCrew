@@ -44,7 +44,8 @@ class AddEpisodesScreen extends StatefulWidget {
   State<AddEpisodesScreen> createState() => _AddEpisodesScreenState();
 }
 
-class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTickerProviderStateMixin {
+class _AddEpisodesScreenState extends State<AddEpisodesScreen>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final List<SeasonData> _seasons = [];
   bool _isLoading = false;
@@ -53,12 +54,12 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
   bool _isCheckingStatus = false;
 
   late GetEpisodesCubit _getEpisodesCubit;
-  
+
   @override
   void initState() {
     super.initState();
     _seasons.add(SeasonData(seasonNumber: 1, existingId: widget.seasonId));
-    
+
     _getEpisodesCubit = GetIt.I<GetEpisodesCubit>();
     _getEpisodesCubit.getEpisodes(widget.seasonId);
 
@@ -67,19 +68,21 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
       duration: const Duration(milliseconds: 1200),
     );
     _animationController.forward();
-    
+
     // Start status check for episodes that are not ready
     _startStatusCheck();
   }
-  
+
   void _startStatusCheck() {
     _statusCheckTimer?.cancel();
-    _statusCheckTimer = Timer.periodic(const Duration(seconds: 10), (timer) async {
+    _statusCheckTimer = Timer.periodic(const Duration(seconds: 10), (
+      timer,
+    ) async {
       if (!mounted) {
         timer.cancel();
         return;
       }
-      
+
       // Check if any episode is not ready
       bool hasNotReadyEpisodes = false;
       for (var season in _seasons) {
@@ -91,15 +94,15 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
         }
         if (hasNotReadyEpisodes) break;
       }
-      
+
       if (!hasNotReadyEpisodes) {
         timer.cancel();
         return;
       }
-      
+
       if (_isCheckingStatus) return;
       _isCheckingStatus = true;
-      
+
       try {
         await _getEpisodesCubit.getEpisodes(widget.seasonId);
       } catch (e) {
@@ -109,7 +112,7 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
       }
     });
   }
-  
+
   @override
   void dispose() {
     _statusCheckTimer?.cancel();
@@ -136,80 +139,90 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
                 if (state is GetEpisodesLoaded) {
                   setState(() {
                     if (_seasons.isNotEmpty && state.episodes.isNotEmpty) {
-                       final seasonData = _seasons[0];
-                       // Update existing episodes or add new ones
-                       final existingEpisodesMap = <int, EpisodeData>{};
-                       final newEpisodes = <EpisodeData>[]; // Preserve unsaved new episodes
-                       for (var epData in seasonData.episodes) {
-                         if (epData.existingId != null) {
-                           existingEpisodesMap[epData.existingId!] = epData;
-                         } else {
-                           if (epData.titleController.text.isNotEmpty || epData.descriptionController.text.isNotEmpty || epData.uploadedVideoId != null) {
-                             newEpisodes.add(epData);
-                           } else if (seasonData.episodes.length == 1) {
-                             // Keep the empty episode if it's the only one to avoid UI flicker
-                             newEpisodes.add(epData);
-                           }
-                         }
-                       }
-                       
-                       seasonData.episodes.clear();
-                       
-                       // Sort fetched episodes by episodeNumber to maintain valid index orders
-                       final sortedEpisodes = List.from(state.episodes)..sort((a, b) => a.episodeNumber.compareTo(b.episodeNumber));
-                       
-                       for (var ep in sortedEpisodes) {
-                           final epData = existingEpisodesMap[ep.id] ?? EpisodeData();
-                           // Only update text controllers if they are empty or haven't been modified by user since load
-                           // For simplicity and avoiding overriding user typing while timer runs, we can just set it if it's new
-                           // But since it's an existing episode, updating is fine. To avoid keyboard jumping, maybe we shouldn't overwrite if not empty, or carefully.
-                           // The simplest is just setting text. The user might be typing, so we only update if it's empty or from a fresh load to avoid disruption,
-                           // but doing text = ep.name moves cursor to start. Let's just do it carefully.
-                           if (epData.titleController.text != ep.name) {
-                             epData.titleController.text = ep.name;
-                           }
-                           if (epData.descriptionController.text != ep.about) {
-                             epData.descriptionController.text = ep.about;
-                           }
-                           
-                           // Store original video ID if not set
-                           epData.originalVideoId ??= ep.video;
-                           
-                           // Update uploadedVideoId only if it's currently null or matches original (meaning user hasn't replaced it)
-                           if (epData.uploadedVideoId == null || epData.uploadedVideoId == epData.originalVideoId) {
-                             epData.uploadedVideoId = ep.video;
-                           }
-                           epData.existingId = ep.id;
-                           
-                           // Update isReady status only if video hasn't changed locally
-                           if (epData.uploadedVideoId == epData.originalVideoId) {
-                             final wasNotReady = !epData.isReady;
-                             epData.isReady = ep.isReady;
-                             
-                             // If video became ready, show notification
-                             if (wasNotReady && epData.isReady && mounted) {
-                               ScaffoldMessenger.of(context).showSnackBar(
-                                 SnackBar(
-                                   content: Text('Episode ${ep.episodeNumber} video is now ready!'),
-                                   backgroundColor: Colors.green,
-                                   duration: const Duration(seconds: 2),
-                                 ),
-                               );
-                             }
-                           }
-                           
-                           seasonData.episodes.add(epData);
-                       }
-                    
-                       seasonData.episodes.addAll(newEpisodes);
+                      final seasonData = _seasons[0];
+                      // Update existing episodes or add new ones
+                      final existingEpisodesMap = <int, EpisodeData>{};
+                      final newEpisodes =
+                          <EpisodeData>[]; // Preserve unsaved new episodes
+                      for (var epData in seasonData.episodes) {
+                        if (epData.existingId != null) {
+                          existingEpisodesMap[epData.existingId!] = epData;
+                        } else {
+                          if (epData.titleController.text.isNotEmpty ||
+                              epData.descriptionController.text.isNotEmpty ||
+                              epData.uploadedVideoId != null) {
+                            newEpisodes.add(epData);
+                          } else if (seasonData.episodes.length == 1) {
+                            // Keep the empty episode if it's the only one to avoid UI flicker
+                            newEpisodes.add(epData);
+                          }
+                        }
+                      }
 
-                       if (seasonData.episodes.isEmpty) {
-                           seasonData.episodes.add(EpisodeData());
-                       }
+                      seasonData.episodes.clear();
+
+                      // Sort fetched episodes by episodeNumber to maintain valid index orders
+                      final sortedEpisodes = List.from(state.episodes)
+                        ..sort(
+                          (a, b) => a.episodeNumber.compareTo(b.episodeNumber),
+                        );
+
+                      for (var ep in sortedEpisodes) {
+                        final epData =
+                            existingEpisodesMap[ep.id] ?? EpisodeData();
+                        // Only update text controllers if they are empty or haven't been modified by user since load
+                        // For simplicity and avoiding overriding user typing while timer runs, we can just set it if it's new
+                        // But since it's an existing episode, updating is fine. To avoid keyboard jumping, maybe we shouldn't overwrite if not empty, or carefully.
+                        // The simplest is just setting text. The user might be typing, so we only update if it's empty or from a fresh load to avoid disruption,
+                        // but doing text = ep.name moves cursor to start. Let's just do it carefully.
+                        if (epData.titleController.text != ep.name) {
+                          epData.titleController.text = ep.name;
+                        }
+                        if (epData.descriptionController.text != ep.about) {
+                          epData.descriptionController.text = ep.about;
+                        }
+
+                        // Store original video ID if not set
+                        epData.originalVideoId ??= ep.video;
+
+                        // Update uploadedVideoId only if it's currently null or matches original (meaning user hasn't replaced it)
+                        if (epData.uploadedVideoId == null ||
+                            epData.uploadedVideoId == epData.originalVideoId) {
+                          epData.uploadedVideoId = ep.video;
+                        }
+                        epData.existingId = ep.id;
+
+                        // Update isReady status only if video hasn't changed locally
+                        if (epData.uploadedVideoId == epData.originalVideoId) {
+                          final wasNotReady = !epData.isReady;
+                          epData.isReady = ep.isReady;
+
+                          // If video became ready, show notification
+                          if (wasNotReady && epData.isReady && mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Episode ${ep.episodeNumber} video is now ready!',
+                                ),
+                                backgroundColor: Colors.green,
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        }
+
+                        seasonData.episodes.add(epData);
+                      }
+
+                      seasonData.episodes.addAll(newEpisodes);
+
+                      if (seasonData.episodes.isEmpty) {
+                        seasonData.episodes.add(EpisodeData());
+                      }
                     }
                   });
                 } else if (state is GetEpisodesError) {
-                   AppMessages.showError(context, state.message);
+                  AppMessages.showError(context, state.message);
                 }
               },
               child: Form(
@@ -220,7 +233,10 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
                     AnimatedSlideIn(
                       index: 0,
                       controller: _animationController,
-                      child: _buildProgressIndicator(currentStep: 3, totalSteps: 3),
+                      child: _buildProgressIndicator(
+                        currentStep: 3,
+                        totalSteps: 3,
+                      ),
                     ),
 
                     SizedBox(height: 30.h),
@@ -246,7 +262,10 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
                               ),
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFFFF6B35), Color(0xFFFF8E53)],
+                                  colors: [
+                                    Color(0xFFFF6B35),
+                                    Color(0xFFFF8E53),
+                                  ],
                                 ),
                                 borderRadius: BorderRadius.circular(20.r),
                               ),
@@ -308,9 +327,7 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
             Container(
               color: Colors.black.withOpacity(0.5),
               child: const Center(
-                child: CircularProgressIndicator(
-                  color: Color(0xFFFF6B35),
-                ),
+                child: CircularProgressIndicator(color: Color(0xFFFF6B35)),
               ),
             ),
         ],
@@ -399,7 +416,9 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
                               SizedBox(height: 16.h),
                               BlocProvider(
                                 create: (_) => GetIt.I<VideoUploadCubit>(),
-                                child: SeasonTrailerUploadWidget(season: season),
+                                child: SeasonTrailerUploadWidget(
+                                  season: season,
+                                ),
                               ),
                               SizedBox(height: 24.h),
                             ],
@@ -411,7 +430,8 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
                                 child: EpisodeItemWidget(
                                   episode: episode,
                                   index: episodeIndex,
-                                  onRemove: () => _removeEpisode(season, episodeIndex),
+                                  onRemove: () =>
+                                      _removeEpisode(season, episodeIndex),
                                   onVideoUploaded: () {
                                     setState(() {
                                       // Trigger rebuild to show updated video status
@@ -646,11 +666,14 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
 
           final result = await createSeasonRepo.createSeason(model: seasonReq);
 
-          result.fold((error) {
-            throw Exception(error.message);
-          }, (response) {
-            currentSeasonId = response.id;
-          });
+          result.fold(
+            (error) {
+              throw Exception(error.message);
+            },
+            (response) {
+              currentSeasonId = response.id;
+            },
+          );
         }
 
         if (currentSeasonId == null) continue;
@@ -672,10 +695,11 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
           if (episode.existingId != null) {
             // Update
             // Only send video if it changed (new video uploaded)
-            final videoChanged = episode.originalVideoId != null && 
-                                episode.uploadedVideoId != null &&
-                                episode.uploadedVideoId != episode.originalVideoId;
-            
+            final videoChanged =
+                episode.originalVideoId != null &&
+                episode.uploadedVideoId != null &&
+                episode.uploadedVideoId != episode.originalVideoId;
+
             final updateReq = UpdateEpisodeRequestModel(
               episodeId: episode.existingId!,
               seasonId: currentSeasonId,
@@ -683,9 +707,11 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
               title: episode.titleController.text,
               description: episode.descriptionController.text,
               // Only send video if it changed
-              video: videoChanged ? episode.uploadedVideoId : null, 
+              video: videoChanged ? episode.uploadedVideoId : null,
             );
-            final result = await updateEpisodeRepo.updateEpisode(model: updateReq);
+            final result = await updateEpisodeRepo.updateEpisode(
+              model: updateReq,
+            );
             result.fold(
               (error) => throw Exception(error.message),
               (success) => null,
@@ -713,10 +739,7 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
 
       if (mounted) {
         setState(() => _isLoading = false);
-        AppMessages.showSuccess(
-          context,
-          AppStrings.uploadedSuccessfully.tr(),
-        );
+        AppMessages.showSuccess(context, AppStrings.uploadedSuccessfully.tr());
         Navigator.of(context).popUntil((route) => route.isFirst);
       }
     } catch (e) {
@@ -729,8 +752,6 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen> with SingleTicker
       }
     }
   }
-
-
 }
 
 class SeasonData {
@@ -769,7 +790,6 @@ class EpisodeData {
     descriptionController.dispose();
   }
 }
-
 
 class EpisodeItemWidget extends StatelessWidget {
   final EpisodeData episode;
@@ -841,19 +861,20 @@ class EpisodeItemWidget extends StatelessWidget {
             listener: (context, state) {
               if (state is VideoUploadSuccess) {
                 // If this is an existing episode and video changed, mark as not ready
-                final videoChanged = episode.existingId != null && 
-                                    episode.uploadedVideoId != null && 
-                                    episode.uploadedVideoId != state.videoId;
-                
+                final videoChanged =
+                    episode.existingId != null &&
+                    episode.uploadedVideoId != null &&
+                    episode.uploadedVideoId != state.videoId;
+
                 if (videoChanged) {
                   episode.isReady = false; // New video needs processing
                 }
-                
+
                 episode.uploadedVideoId = state.videoId;
-                
+
                 // Trigger rebuild of parent widget
                 onVideoUploaded?.call();
-                
+
                 AppMessages.showSuccess(
                   context,
                   'Video for Episode ${index + 1} uploaded!',
@@ -891,7 +912,11 @@ class EpisodeItemWidget extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.r),
                     ),
-                    child: _buildUploadContent(state, episode.videoFile, episode),
+                    child: _buildUploadContent(
+                      state,
+                      episode.videoFile,
+                      episode,
+                    ),
                   ),
                 ),
               );
@@ -902,7 +927,11 @@ class EpisodeItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildUploadContent(VideoUploadState state, File? file, EpisodeData episode) {
+  Widget _buildUploadContent(
+    VideoUploadState state,
+    File? file,
+    EpisodeData episode,
+  ) {
     if (state is VideoUploadLoading || state is VideoUploadProgress) {
       int progress = 0;
       if (state is VideoUploadProgress) progress = state.progress;
@@ -920,14 +949,15 @@ class EpisodeItemWidget extends StatelessWidget {
     // Check if video is uploaded (either from new upload or existing from edit)
     if (state is VideoUploadSuccess || episode.uploadedVideoId != null) {
       // Check if video is ready (for display purposes only - doesn't block update)
-      final videoChanged = episode.existingId != null && 
-                          episode.originalVideoId != null && 
-                          episode.uploadedVideoId != null &&
-                          episode.uploadedVideoId != episode.originalVideoId;
-      final isReady = episode.existingId == null 
-          ? true 
+      final videoChanged =
+          episode.existingId != null &&
+          episode.originalVideoId != null &&
+          episode.uploadedVideoId != null &&
+          episode.uploadedVideoId != episode.originalVideoId;
+      final isReady = episode.existingId == null
+          ? true
           : (videoChanged ? false : episode.isReady);
-      
+
       return Column(
         children: [
           Icon(Icons.check_circle, color: Colors.green, size: 24.sp),
@@ -945,10 +975,7 @@ class EpisodeItemWidget extends StatelessWidget {
             SizedBox(height: 4.h),
             Text(
               file.path.split('/').last,
-              style: TextStyle(
-                fontSize: 11.sp,
-                color: Colors.black87,
-              ),
+              style: TextStyle(fontSize: 11.sp, color: Colors.black87),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -1035,15 +1062,9 @@ class SeasonTrailerUploadWidget extends StatelessWidget {
           listener: (context, state) {
             if (state is VideoUploadSuccess) {
               season.uploadedTrailerId = state.videoId;
-              AppMessages.showSuccess(
-                context,
-                'Season trailer uploaded!',
-              );
+              AppMessages.showSuccess(context, 'Season trailer uploaded!');
             } else if (state is VideoUploadError) {
-              AppMessages.showError(
-                context,
-                'Upload failed: ${state.message}',
-              );
+              AppMessages.showError(context, 'Upload failed: ${state.message}');
             }
           },
           builder: (context, state) {

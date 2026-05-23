@@ -117,31 +117,47 @@ class ProfileModel extends Equatable {
 
     return ProfileModel(
       id: json['id'],
-      favoriteCategories: json['favorite_categories'] ?? [],
-      createdAt: json['created_at'] != null
+      favoriteCategories: json['favorite_categories'] is List
+          ? json['favorite_categories']
+          : [],
+      createdAt: json['created_at'] is String
           ? DateTime.parse(json['created_at'])
           : DateTime.now(),
-      updatedAt: json['updated_at'] != null
+      updatedAt: json['updated_at'] is String
           ? DateTime.parse(json['updated_at'])
           : DateTime.now(),
-      specification: json['specification'],
-      institute: json['institute'],
-      academicYear: json['academic_year'],
-      skills: json['skills'],
-      country: json['country'],
-      city: json['city'],
-      cv: json['cv'],
-      facebookLink: json['facebook_link'],
-      instagramLink: json['instagram_link'],
-      linkedinLink: json['linkedin_link'],
-      youtubeLink: json['youtube_link'],
-      paymentPlan: json['payment_plan'],
+      specification: json['specification'] is String
+          ? json['specification']
+          : (json['specification'] != null
+                ? json['specification'].toString()
+                : null),
+      institute: json['institute'] is String ? json['institute'] : null,
+      academicYear: json['academic_year'] is String
+          ? json['academic_year']
+          : null,
+      skills: json['skills'] is String
+          ? json['skills']
+          : (json['skills'] != null ? json['skills'].toString() : null),
+      country: json['country'] is String ? json['country'] : null,
+      city: json['city'] is String ? json['city'] : null,
+      cv: json['cv'] is String ? json['cv'] : null,
+      facebookLink: json['facebook_link'] is String
+          ? json['facebook_link']
+          : null,
+      instagramLink: json['instagram_link'] is String
+          ? json['instagram_link']
+          : null,
+      linkedinLink: json['linkedin_link'] is String
+          ? json['linkedin_link']
+          : null,
+      youtubeLink: json['youtube_link'] is String ? json['youtube_link'] : null,
+      paymentPlan: json['payment_plan'] is String ? json['payment_plan'] : null,
       isActivatedByAdmin: json['is_activated_by_admin'],
       isAvailable: json['is_available'] is bool
           ? json['is_available']
           : (json['is_available'] == 'true'),
       plan: planMap,
-      experience: json['experience'],
+      experience: json['experience'] is String ? json['experience'] : null,
       images: imagesList,
       videos: videosList,
       views: json['views'] is int
@@ -169,8 +185,10 @@ class ProfileModel extends Equatable {
                 ? int.tryParse(json['approved_job_applications_count'])
                 : null),
       roles: rolesList,
-      experienceLevel: json['experience_level'],
-      portfolioLinks: json['portfolio_links'] != null
+      experienceLevel: json['experience_level'] is String
+          ? json['experience_level']
+          : null,
+      portfolioLinks: json['portfolio_links'] is List
           ? List<String>.from(json['portfolio_links'])
           : null,
     );

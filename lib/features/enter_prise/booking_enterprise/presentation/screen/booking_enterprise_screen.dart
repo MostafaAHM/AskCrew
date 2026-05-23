@@ -226,7 +226,7 @@ class _BookingEnterpriseScreenState extends State<BookingEnterpriseScreen>
 
         return Positioned(
           right: 12.w,
-          bottom: 25.h,
+          bottom: 50.h,
           child: AnimatedSlideIn(
             index: 3,
             controller: _animationController,

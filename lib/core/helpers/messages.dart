@@ -100,7 +100,11 @@ class AppMessages {
                 color: Colors.white24,
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.error_outline_rounded, color: Colors.white, size: 20.r),
+              child: Icon(
+                Icons.error_outline_rounded,
+                color: Colors.white,
+                size: 20.r,
+              ),
             ),
             12.horizontalSpace,
             Flexible(
@@ -144,7 +148,11 @@ class AppMessages {
                 color: Colors.white24,
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.check_circle_outline_rounded, color: Colors.white, size: 20.r),
+              child: Icon(
+                Icons.check_circle_outline_rounded,
+                color: Colors.white,
+                size: 20.r,
+              ),
             ),
             12.horizontalSpace,
             Flexible(

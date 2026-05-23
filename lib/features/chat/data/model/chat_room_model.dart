@@ -43,15 +43,47 @@ class ChatRoomModel extends Equatable {
 
   factory ChatRoomModel.fromJson(Map<String, dynamic> json) {
     return ChatRoomModel(
-      id: json['id'],
-      participant1: UserModel.fromJson(json['participant1']),
-      participant2: UserModel.fromJson(json['participant2']),
-      lastMessage: json['last_message'] != null
+      id: json['id'] is int ? json['id'] : 0,
+      participant1: json['participant1'] is Map
+          ? UserModel.fromJson(json['participant1'])
+          : UserModel(
+              id: 0,
+              email: '',
+              fullname: '',
+              mobilePhone: '',
+              wallet: '',
+              points: 0,
+              isVerified: false,
+              isActive: false,
+              type: '',
+              typeInt: 0,
+              dateJoined: DateTime.now(),
+            ),
+      participant2: json['participant2'] is Map
+          ? UserModel.fromJson(json['participant2'])
+          : UserModel(
+              id: 0,
+              email: '',
+              fullname: '',
+              mobilePhone: '',
+              wallet: '',
+              points: 0,
+              isVerified: false,
+              isActive: false,
+              type: '',
+              typeInt: 0,
+              dateJoined: DateTime.now(),
+            ),
+      lastMessage: json['last_message'] is Map
           ? ChatMessageModel.fromJson(json['last_message'])
           : null,
-      unreadCount: json['unread_count'] ?? 0,
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+      unreadCount: json['unread_count'] is int ? json['unread_count'] : 0,
+      createdAt: json['created_at'] is String
+          ? DateTime.parse(json['created_at'])
+          : DateTime.now(),
+      updatedAt: json['updated_at'] is String
+          ? DateTime.parse(json['updated_at'])
+          : DateTime.now(),
     );
   }
 

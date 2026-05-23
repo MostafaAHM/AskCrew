@@ -3,7 +3,6 @@ import 'package:aflam/core/helpers/messages.dart';
 import 'package:aflam/features/viewer/home_viewer/presentation/widgets/home_top_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -118,124 +117,133 @@ class _CommunityScreensState extends State<CommunityScreens> {
                 },
                 child: Scaffold(
                   backgroundColor: AppColors.lightBGColor,
-                  floatingActionButtonLocation:
-                      Directionality.of(context) == ui.TextDirection.rtl
-                      ? FloatingActionButtonLocation.startFloat
-                      : FloatingActionButtonLocation.endFloat,
-                  floatingActionButton: _selectedQuestion == null
-                      ? AskQuestionFab(
-                          key: const ValueKey('fab_questions'),
-                          orange: orange,
-                          borderRadius: borderRadius,
-                        )
-                      : const SizedBox.shrink(),
-                  body: Padding(
-                    padding: REdgeInsets.symmetric(horizontal: 16.w),
-                    child: Column(
-                      children: [
-                        30.verticalSpace,
-                        HomeTopBar(showChat: true),
-                        10.verticalSpace,
-                        8.verticalSpace,
-                        Expanded(
-                          child: BlocBuilder<QuestionsCubit, QuestionsState>(
-                            builder: (context, state) {
-                              if (_selectedQuestion == null) {
-                                if (state is QuestionsLoading) {
-                                  return ListView.separated(
-                                    padding: EdgeInsets.only(bottom: 90.h),
-                                    itemCount: 4,
-                                    separatorBuilder: (_, __) =>
-                                        12.verticalSpace,
-                                    itemBuilder: (_, __) =>
-                                        const CommunityQuestionCardShimmer(),
-                                  );
-                                } else if (state is QuestionsFailure) {
-                                  return Center(
-                                    child: Text(state.exception.message),
-                                  );
-                                } else if (state is QuestionsSuccess) {
-                                  final questions = state.questions;
-
-                                  if (questions.isEmpty) {
-                                    return Padding(
-                                      padding: EdgeInsets.only(bottom: 80.h),
-                                      child: Center(
-                                        child: Text(
-                                          'community_questions_empty'.tr(),
-                                          style: TextStyle(
-                                            fontSize: 15.sp,
-                                            color: Colors.grey.shade500,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }
-
-                                  return ListView.separated(
-                                    padding: EdgeInsets.only(bottom: 90.h),
-                                    itemCount: questions.length,
-                                    separatorBuilder: (_, __) =>
-                                        12.verticalSpace,
-                                    itemBuilder: (context, index) {
-                                      final q = questions[index];
-
-                                      final item = QuestionItemData(
-                                        id: q.id,
-                                        userName: q.authorName,
-                                        avatarUrl:
-                                            'https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=200',
-                                        repliesCount: q.answers.length,
-                                        text: q.body,
+                  body: Stack(
+                    children: [
+                      Padding(
+                        padding: REdgeInsets.symmetric(horizontal: 16.w),
+                        child: Column(
+                          children: [
+                            30.verticalSpace,
+                            HomeTopBar(showChat: true),
+                            10.verticalSpace,
+                            8.verticalSpace,
+                            Expanded(
+                              child: BlocBuilder<QuestionsCubit, QuestionsState>(
+                                builder: (context, state) {
+                                  if (_selectedQuestion == null) {
+                                    if (state is QuestionsLoading) {
+                                      return ListView.separated(
+                                        padding: EdgeInsets.only(bottom: 90.h),
+                                        itemCount: 4,
+                                        separatorBuilder: (_, __) =>
+                                            12.verticalSpace,
+                                        itemBuilder: (_, __) =>
+                                            const CommunityQuestionCardShimmer(),
                                       );
+                                    } else if (state is QuestionsFailure) {
+                                      return Center(
+                                        child: Text(state.exception.message),
+                                      );
+                                    } else if (state is QuestionsSuccess) {
+                                      final questions = state.questions;
 
-                                      return CommunityQuestionCard(
-                                        data: item,
-                                        orange: orange,
-                                        currentUserId: _currentUserId,
-                                        questionAuthorId: q.author,
-                                        onDelete: (id) {
-                                          context
-                                              .read<QuestionsCubit>()
-                                              .deleteQuestion(questionId: id);
-                                        },
-                                        onEdit: (question) {
-                                          _openEditQuestionSheet(
-                                            context,
-                                            questions[index],
+                                      if (questions.isEmpty) {
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                            bottom: 80.h,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'community_questions_empty'.tr(),
+                                              style: TextStyle(
+                                                fontSize: 15.sp,
+                                                color: Colors.grey.shade500,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+
+                                      return ListView.separated(
+                                        padding: EdgeInsets.only(bottom: 90.h),
+                                        itemCount: questions.length,
+                                        separatorBuilder: (_, __) =>
+                                            12.verticalSpace,
+                                        itemBuilder: (context, index) {
+                                          final q = questions[index];
+
+                                          final item = QuestionItemData(
+                                            id: q.id,
+                                            userName: q.authorName,
+                                            avatarUrl:
+                                                'https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=200',
+                                            repliesCount: q.answers.length,
+                                            text: q.body,
+                                          );
+
+                                          return CommunityQuestionCard(
+                                            data: item,
+                                            orange: orange,
+                                            currentUserId: _currentUserId,
+                                            questionAuthorId: q.author,
+                                            onDelete: (id) {
+                                              context
+                                                  .read<QuestionsCubit>()
+                                                  .deleteQuestion(
+                                                    questionId: id,
+                                                  );
+                                            },
+                                            onEdit: (question) {
+                                              _openEditQuestionSheet(
+                                                context,
+                                                questions[index],
+                                              );
+                                            },
+                                            onTapReplies: (id) {
+                                              setState(() {
+                                                _selectedQuestion = q;
+                                              });
+                                              context
+                                                  .read<QuestionsCubit>()
+                                                  .getAnswers(q.id);
+                                            },
                                           );
                                         },
-                                        onTapReplies: (id) {
-                                          setState(() {
-                                            _selectedQuestion = q;
-                                          });
-                                          context
-                                              .read<QuestionsCubit>()
-                                              .getAnswers(q.id);
-                                        },
                                       );
+                                    }
+
+                                    return const SizedBox.shrink();
+                                  }
+
+                                  return QuestionDetailsSection(
+                                    question: _selectedQuestion!,
+                                    currentUserId: _currentUserId,
+                                    onBack: () {
+                                      setState(() {
+                                        _selectedQuestion = null;
+                                      });
+                                      context
+                                          .read<QuestionsCubit>()
+                                          .getQuestions();
                                     },
                                   );
-                                }
-
-                                return const SizedBox.shrink();
-                              }
-
-                              return QuestionDetailsSection(
-                                question: _selectedQuestion!,
-                                currentUserId: _currentUserId,
-                                onBack: () {
-                                  setState(() {
-                                    _selectedQuestion = null;
-                                  });
-                                  context.read<QuestionsCubit>().getQuestions();
                                 },
-                              );
-                            },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (_selectedQuestion == null)
+                        Positioned(
+                          right: 12.w,
+                          bottom: 120.h,
+                          child: AskQuestionFab(
+                            key: const ValueKey('fab_questions'),
+                            orange: orange,
+                            borderRadius: borderRadius,
                           ),
                         ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
               ),
@@ -322,210 +330,21 @@ class _CommunityScreensState extends State<CommunityScreens> {
                       },
                       child: Scaffold(
                         backgroundColor: AppColors.lightBGColor,
-                        floatingActionButtonLocation:
-                            Directionality.of(context) == ui.TextDirection.rtl
-                            ? FloatingActionButtonLocation.startFloat
-                            : FloatingActionButtonLocation.endFloat,
-                        floatingActionButton: isStudent
-                            ? (_selectedQuestion == null
-                                  ? AskQuestionFab(
-                                      key: const ValueKey('fab_questions'),
-                                      orange: orange,
-                                      borderRadius: borderRadius,
-                                    )
-                                  : const SizedBox.shrink())
-                            : AnimatedBuilder(
-                                animation: tabController,
-                                builder: (context, _) {
-                                  if (tabController.index != 1 && isAddingJob) {
-                                    WidgetsBinding.instance
-                                        .addPostFrameCallback((_) {
-                                          if (mounted) {
-                                            setState(() => isAddingJob = false);
-                                          }
-                                        });
-                                  }
-
-                                  Widget fab = const SizedBox.shrink(
-                                    key: ValueKey('fab_none'),
-                                  );
-
-                                  if (tabController.index == 0 &&
-                                      _selectedQuestion == null) {
-                                    fab = AskQuestionFab(
-                                      key: const ValueKey('fab_questions'),
-                                      orange: orange,
-                                      borderRadius: borderRadius,
-                                    );
-                                  } else if (tabController.index == 1 &&
-                                      !isAddingJob &&
-                                      !isStudent &&
-                                      _selectedJob == null &&
-                                      _selectedFilter == JobsFilter.yourOwn) {
-                                    fab = PostJobFab(
-                                      key: const ValueKey('fab_jobs'),
-                                      orange: orange,
-                                      borderRadius: borderRadius,
-                                      onTap: () {
-                                        setState(() {
-                                          isAddingJob = true;
-                                          _jobToEdit = null;
-                                        });
-                                      },
-                                    );
-                                  }
-
-                                  return AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 250),
-                                    transitionBuilder: (child, animation) {
-                                      return ScaleTransition(
-                                        scale: animation,
-                                        child: FadeTransition(
-                                          opacity: animation,
-                                          child: child,
-                                        ),
-                                      );
-                                    },
-                                    child: fab,
-                                  );
-                                },
-                              ),
-                        body: Padding(
-                          padding: REdgeInsets.symmetric(horizontal: 16.w),
-                          child: Column(
-                            children: [
-                              30.verticalSpace,
-                              HomeTopBar(showChat: true),
-                              10.verticalSpace,
-                              if (!isStudent) CommunityTopTabs(orange: orange),
-                              8.verticalSpace,
-                              Expanded(
-                                child: isStudent
-                                    ? // For students, show only Questions
-                                      BlocBuilder<
-                                        QuestionsCubit,
-                                        QuestionsState
-                                      >(
-                                        builder: (context, state) {
-                                          if (_selectedQuestion == null) {
-                                            if (state is QuestionsLoading) {
-                                              return ListView.separated(
-                                                padding: EdgeInsets.only(
-                                                  bottom: 90.h,
-                                                ),
-                                                itemCount: 4,
-                                                separatorBuilder: (_, __) =>
-                                                    12.verticalSpace,
-                                                itemBuilder: (_, __) =>
-                                                    const CommunityQuestionCardShimmer(),
-                                              );
-                                            } else if (state
-                                                is QuestionsFailure) {
-                                              return Center(
-                                                child: Text(
-                                                  state.exception.message,
-                                                ),
-                                              );
-                                            } else if (state
-                                                is QuestionsSuccess) {
-                                              final questions = state.questions;
-
-                                              if (questions.isEmpty) {
-                                                return Padding(
-                                                  padding: EdgeInsets.only(
-                                                    bottom: 80.h,
-                                                  ),
-                                                  child: Center(
-                                                    child: Text(
-                                                      'community_questions_empty'
-                                                          .tr(),
-                                                      style: TextStyle(
-                                                        fontSize: 15.sp,
-                                                        color: Colors
-                                                            .grey
-                                                            .shade500,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-
-                                              return ListView.separated(
-                                                padding: EdgeInsets.only(
-                                                  bottom: 90.h,
-                                                ),
-                                                itemCount: questions.length,
-                                                separatorBuilder: (_, __) =>
-                                                    12.verticalSpace,
-                                                itemBuilder: (context, index) {
-                                                  final q = questions[index];
-
-                                                  final item = QuestionItemData(
-                                                    id: q.id,
-                                                    userName: q.authorName,
-                                                    avatarUrl:
-                                                        'https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=200',
-                                                    repliesCount:
-                                                        q.answers.length,
-                                                    text: q.body,
-                                                  );
-
-                                                  return CommunityQuestionCard(
-                                                    data: item,
-                                                    orange: orange,
-                                                    currentUserId:
-                                                        _currentUserId,
-                                                    questionAuthorId: q.author,
-                                                    onDelete: (id) {
-                                                      context
-                                                          .read<
-                                                            QuestionsCubit
-                                                          >()
-                                                          .deleteQuestion(
-                                                            questionId: id,
-                                                          );
-                                                    },
-                                                    onEdit: (question) {
-                                                      _openEditQuestionSheet(
-                                                        context,
-                                                        questions[index],
-                                                      );
-                                                    },
-                                                    onTapReplies: (id) {
-                                                      setState(() {
-                                                        _selectedQuestion = q;
-                                                      });
-                                                      context
-                                                          .read<
-                                                            QuestionsCubit
-                                                          >()
-                                                          .getAnswers(q.id);
-                                                    },
-                                                  );
-                                                },
-                                              );
-                                            }
-
-                                            return const SizedBox.shrink();
-                                          }
-
-                                          return QuestionDetailsSection(
-                                            question: _selectedQuestion!,
-                                            currentUserId: _currentUserId,
-                                            onBack: () {
-                                              setState(() {
-                                                _selectedQuestion = null;
-                                              });
-                                              context
-                                                  .read<QuestionsCubit>()
-                                                  .getQuestions();
-                                            },
-                                          );
-                                        },
-                                      )
-                                    : TabBarView(
-                                        children: [
-                                          // ===== Questions tab
+                        body: Stack(
+                          children: [
+                            Padding(
+                              padding: REdgeInsets.symmetric(horizontal: 16.w),
+                              child: Column(
+                                children: [
+                                  30.verticalSpace,
+                                  HomeTopBar(showChat: true),
+                                  10.verticalSpace,
+                                  if (!isStudent)
+                                    CommunityTopTabs(orange: orange),
+                                  8.verticalSpace,
+                                  Expanded(
+                                    child: isStudent
+                                        ? // For students, show only Questions
                                           BlocBuilder<
                                             QuestionsCubit,
                                             QuestionsState
@@ -650,63 +469,277 @@ class _CommunityScreensState extends State<CommunityScreens> {
                                                 },
                                               );
                                             },
-                                          ),
+                                          )
+                                        : TabBarView(
+                                            children: [
+                                              // ===== Questions tab
+                                              BlocBuilder<
+                                                QuestionsCubit,
+                                                QuestionsState
+                                              >(
+                                                builder: (context, state) {
+                                                  if (_selectedQuestion ==
+                                                      null) {
+                                                    if (state
+                                                        is QuestionsLoading) {
+                                                      return ListView.separated(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                              bottom: 90.h,
+                                                            ),
+                                                        itemCount: 4,
+                                                        separatorBuilder:
+                                                            (_, __) => 12
+                                                                .verticalSpace,
+                                                        itemBuilder: (_, __) =>
+                                                            const CommunityQuestionCardShimmer(),
+                                                      );
+                                                    } else if (state
+                                                        is QuestionsFailure) {
+                                                      return Center(
+                                                        child: Text(
+                                                          state
+                                                              .exception
+                                                              .message,
+                                                        ),
+                                                      );
+                                                    } else if (state
+                                                        is QuestionsSuccess) {
+                                                      final questions =
+                                                          state.questions;
 
-                                          // ===== Jobs tab
-                                          CommunityJobsTab(
-                                            orange: orange,
-                                            lightPill: lightPill,
-                                            isAddingJob: isAddingJob,
-                                            isStudent: isStudent,
-                                            selectedFilter: isStudent
-                                                ? JobsFilter.suggested
-                                                : _selectedFilter,
-                                            selectedJob: _selectedJob,
-                                            jobToEdit: _jobToEdit,
-                                            onJobSelected: (job) {
-                                              setState(() {
-                                                _selectedJob = job;
-                                              });
-                                            },
-                                            onFilterChanged: (value) {
-                                              setState(() {
-                                                _selectedFilter = value;
-                                              });
-                                              context
-                                                  .read<GetAllJopsCubit>()
-                                                  .getAllJops(
-                                                    filter: jobsFilterApiValue(
-                                                      value,
-                                                    ),
+                                                      if (questions.isEmpty) {
+                                                        return Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                bottom: 80.h,
+                                                              ),
+                                                          child: Center(
+                                                            child: Text(
+                                                              'community_questions_empty'
+                                                                  .tr(),
+                                                              style: TextStyle(
+                                                                fontSize: 15.sp,
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+
+                                                      return ListView.separated(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                              bottom: 90.h,
+                                                            ),
+                                                        itemCount:
+                                                            questions.length,
+                                                        separatorBuilder:
+                                                            (_, __) => 12
+                                                                .verticalSpace,
+                                                        itemBuilder: (context, index) {
+                                                          final q =
+                                                              questions[index];
+
+                                                          final item =
+                                                              QuestionItemData(
+                                                                id: q.id,
+                                                                userName: q
+                                                                    .authorName,
+                                                                avatarUrl:
+                                                                    'https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=200',
+                                                                repliesCount: q
+                                                                    .answers
+                                                                    .length,
+                                                                text: q.body,
+                                                              );
+
+                                                          return CommunityQuestionCard(
+                                                            data: item,
+                                                            orange: orange,
+                                                            currentUserId:
+                                                                _currentUserId,
+                                                            questionAuthorId:
+                                                                q.author,
+                                                            onDelete: (id) {
+                                                              context
+                                                                  .read<
+                                                                    QuestionsCubit
+                                                                  >()
+                                                                  .deleteQuestion(
+                                                                    questionId:
+                                                                        id,
+                                                                  );
+                                                            },
+                                                            onEdit: (question) {
+                                                              _openEditQuestionSheet(
+                                                                context,
+                                                                questions[index],
+                                                              );
+                                                            },
+                                                            onTapReplies: (id) {
+                                                              setState(() {
+                                                                _selectedQuestion =
+                                                                    q;
+                                                              });
+                                                              context
+                                                                  .read<
+                                                                    QuestionsCubit
+                                                                  >()
+                                                                  .getAnswers(
+                                                                    q.id,
+                                                                  );
+                                                            },
+                                                          );
+                                                        },
+                                                      );
+                                                    }
+
+                                                    return const SizedBox.shrink();
+                                                  }
+
+                                                  return QuestionDetailsSection(
+                                                    question:
+                                                        _selectedQuestion!,
+                                                    currentUserId:
+                                                        _currentUserId,
+                                                    onBack: () {
+                                                      setState(() {
+                                                        _selectedQuestion =
+                                                            null;
+                                                      });
+                                                      context
+                                                          .read<
+                                                            QuestionsCubit
+                                                          >()
+                                                          .getQuestions();
+                                                    },
                                                   );
-                                            },
-                                            onEditJob: (job) {
-                                              setState(() {
-                                                _jobToEdit = job;
-                                                isAddingJob = true;
-                                                _selectedJob =
-                                                    null; // Close details screen
-                                              });
-                                            },
-                                            onJobCreated: () {
-                                              setState(() {
-                                                isAddingJob = false;
-                                                _jobToEdit = null;
-                                              });
-                                              context
-                                                  .read<GetAllJopsCubit>()
-                                                  .getAllJops(
-                                                    filter: jobsFilterApiValue(
-                                                      _selectedFilter,
-                                                    ),
-                                                  );
-                                            },
+                                                },
+                                              ),
+
+                                              // ===== Jobs tab
+                                              CommunityJobsTab(
+                                                orange: orange,
+                                                lightPill: lightPill,
+                                                isAddingJob: isAddingJob,
+                                                isStudent: isStudent,
+                                                selectedFilter: isStudent
+                                                    ? JobsFilter.suggested
+                                                    : _selectedFilter,
+                                                selectedJob: _selectedJob,
+                                                jobToEdit: _jobToEdit,
+                                                onJobSelected: (job) {
+                                                  setState(() {
+                                                    _selectedJob = job;
+                                                  });
+                                                },
+                                                onFilterChanged: (value) {
+                                                  setState(() {
+                                                    _selectedFilter = value;
+                                                  });
+                                                  context
+                                                      .read<GetAllJopsCubit>()
+                                                      .getAllJops(
+                                                        filter:
+                                                            jobsFilterApiValue(
+                                                              value,
+                                                            ),
+                                                      );
+                                                },
+                                                onEditJob: (job) {
+                                                  setState(() {
+                                                    _jobToEdit = job;
+                                                    isAddingJob = true;
+                                                    _selectedJob =
+                                                        null; // Close details screen
+                                                  });
+                                                },
+                                                onJobCreated: () {
+                                                  setState(() {
+                                                    isAddingJob = false;
+                                                    _jobToEdit = null;
+                                                  });
+                                                  context
+                                                      .read<GetAllJopsCubit>()
+                                                      .getAllJops(
+                                                        filter:
+                                                            jobsFilterApiValue(
+                                                              _selectedFilter,
+                                                            ),
+                                                      );
+                                                },
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+
+                            Positioned(
+                              right: 12.w,
+                              bottom: 120.h,
+                              child: AnimatedBuilder(
+                                animation: tabController,
+                                builder: (context, _) {
+                                  if (tabController.index != 1 && isAddingJob) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                          if (mounted) {
+                                            setState(() => isAddingJob = false);
+                                          }
+                                        });
+                                  }
+
+                                  Widget fab = const SizedBox.shrink(
+                                    key: ValueKey('fab_none'),
+                                  );
+
+                                  if (tabController.index == 0 &&
+                                      _selectedQuestion == null) {
+                                    fab = AskQuestionFab(
+                                      key: const ValueKey('fab_questions'),
+                                      orange: orange,
+                                      borderRadius: borderRadius,
+                                    );
+                                  } else if (tabController.index == 1 &&
+                                      !isAddingJob &&
+                                      !isStudent &&
+                                      _selectedJob == null &&
+                                      _selectedFilter == JobsFilter.yourOwn) {
+                                    fab = PostJobFab(
+                                      key: const ValueKey('fab_jobs'),
+                                      orange: orange,
+                                      borderRadius: borderRadius,
+                                      onTap: () {
+                                        setState(() {
+                                          isAddingJob = true;
+                                          _jobToEdit = null;
+                                        });
+                                      },
+                                    );
+                                  }
+
+                                  return AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 250),
+                                    transitionBuilder: (child, animation) {
+                                      return ScaleTransition(
+                                        scale: animation,
+                                        child: FadeTransition(
+                                          opacity: animation,
+                                          child: child,
+                                        ),
+                                      );
+                                    },
+                                    child: fab,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

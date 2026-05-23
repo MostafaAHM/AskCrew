@@ -43,20 +43,24 @@ class UserModel extends Equatable {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'],
-      email: json['email'] ?? '',
-      fullname: json['fullname'] ?? '',
-      mobilePhone: json['mobile_phone'] ?? '',
-      wallet: json['wallet'] ?? '0.00',
-      points: json['points'] ?? 0,
-      profilePhoto: json['profile_photo'],
+      email: json['email'] is String ? json['email'] : '',
+      fullname: json['fullname'] is String ? json['fullname'] : '',
+      mobilePhone: json['mobile_phone'] is String ? json['mobile_phone'] : '',
+      wallet: json['wallet'] is String ? json['wallet'] : '0.00',
+      points: json['points'] is int ? json['points'] : 0,
+      profilePhoto: json['profile_photo'] is String
+          ? json['profile_photo']
+          : null,
       personalInfo: json['personal_info'],
-      isVerified: json['is_verified'] ?? false,
-      waterMark: json['water_mark'] ?? false,
-      isActive: json['is_active'] ?? false,
-      type: json['type'] ?? '',
-      typeInt: json['type_int'] ?? 0,
-      dateJoined: DateTime.parse(json['date_joined']),
-      profile: json['profile'] != null
+      isVerified: json['is_verified'] is bool ? json['is_verified'] : false,
+      waterMark: json['water_mark'] is bool ? json['water_mark'] : false,
+      isActive: json['is_active'] is bool ? json['is_active'] : false,
+      type: json['type'] is String ? json['type'] : '',
+      typeInt: json['type_int'] is int ? json['type_int'] : 0,
+      dateJoined: json['date_joined'] is String
+          ? DateTime.parse(json['date_joined'])
+          : DateTime.now(),
+      profile: json['profile'] is Map
           ? ProfileModel.fromJson(json['profile'])
           : null,
       ratingCount: json['rating_count'] is int
