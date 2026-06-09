@@ -33,17 +33,17 @@ class UploadSeriesScreen extends StatefulWidget {
   State<UploadSeriesScreen> createState() => _UploadSeriesScreenState();
 }
 
-
-class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTickerProviderStateMixin {
+class _UploadSeriesScreenState extends State<UploadSeriesScreen>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _seriesTitleController = TextEditingController();
   final _aboutController = TextEditingController();
-  
+
   late AnimationController _animationController;
 
   late final CreateSeriesCubit _createSeriesCubit;
   late final UpdateSeriesCubit _updateSeriesCubit;
-  
+
   File? _coverImage;
   int? _selectedCategoryId;
   bool _isCreating = false;
@@ -77,20 +77,19 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
   }
 
   @override
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => getIt<CategoriesCubit>()..fetchCategories()),
+        BlocProvider(
+          create: (context) => getIt<CategoriesCubit>()..fetchCategories(),
+        ),
         BlocProvider.value(value: _createSeriesCubit),
         BlocProvider.value(value: _updateSeriesCubit),
       ],
       child: Scaffold(
         backgroundColor: const Color(0xFFFDFDFD),
-        appBar: CustomAppBar.backAppBar(
-          showLogoInBackAppBar: true,
-        ),
+        appBar: CustomAppBar.backAppBar(showLogoInBackAppBar: true),
         body: Builder(
           builder: (context) {
             return MultiBlocListener(
@@ -124,11 +123,11 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
                 BlocListener<UpdateSeriesCubit, UpdateSeriesState>(
                   listener: (context, state) {
                     if (state is UpdateSeriesLoading) {
-                       AppMessages.showLoading(context);
+                      AppMessages.showLoading(context);
                     } else if (state is UpdateSeriesSuccess) {
-                       AppMessages.hideLoading(context);
-                       AppMessages.showSuccess(context, "Series Updated");
-                        Navigator.push(
+                      AppMessages.hideLoading(context);
+                      AppMessages.showSuccess(context, "Series Updated");
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => AddSeriesDetailsScreen(
@@ -142,10 +141,10 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
                         ),
                       );
                     } else if (state is UpdateSeriesError) {
-                       AppMessages.hideLoading(context);
-                       AppMessages.showError(context, state.message);
+                      AppMessages.hideLoading(context);
+                      AppMessages.showError(context, state.message);
                     }
-                  }
+                  },
                 ),
               ],
               child: SingleChildScrollView(
@@ -164,11 +163,14 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
                       AnimatedSlideIn(
                         index: 0,
                         controller: _animationController,
-                        child: _buildProgressIndicator(currentStep: 1, totalSteps: 3),
+                        child: _buildProgressIndicator(
+                          currentStep: 1,
+                          totalSteps: 3,
+                        ),
                       ),
-                      
+
                       SizedBox(height: 30.h),
-                      
+
                       AnimatedSlideIn(
                         index: 1,
                         controller: _animationController,
@@ -181,9 +183,9 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
                           ),
                         ),
                       ),
-                      
+
                       SizedBox(height: 8.h),
-                      
+
                       AnimatedSlideIn(
                         index: 2,
                         controller: _animationController,
@@ -195,9 +197,9 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
                           ),
                         ),
                       ),
-                      
+
                       SizedBox(height: 30.h),
-                      
+
                       AnimatedSlideIn(
                         index: 3,
                         controller: _animationController,
@@ -207,9 +209,9 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
                           hint: AppStrings.enterYourSeriesName.tr(),
                         ),
                       ),
-                      
+
                       SizedBox(height: 30.h),
-                      
+
                       AnimatedSlideIn(
                         index: 4,
                         controller: _animationController,
@@ -219,7 +221,7 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
                           hint: AppStrings.someInfoAboutIt.tr(),
                         ),
                       ),
-                      
+
                       SizedBox(height: 30.h),
                       AnimatedSlideIn(
                         index: 5,
@@ -240,10 +242,10 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
                                 ),
                               );
                             }
-                            
+
                             List<DropdownMenuItem<int>> items = [];
-                            
-                           if (state is CategoriesLoaded) {
+
+                            if (state is CategoriesLoaded) {
                               items = state.categories.map((category) {
                                 return DropdownMenuItem<int>(
                                   value: category.id,
@@ -252,10 +254,15 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
                               }).toList();
                             } else if (state is CategoriesError) {
                               items = [
-                                DropdownMenuItem(value: null, child: Text(AppStrings.errorLoadingCategories.tr())),
+                                DropdownMenuItem(
+                                  value: null,
+                                  child: Text(
+                                    AppStrings.errorLoadingCategories.tr(),
+                                  ),
+                                ),
                               ];
                             }
-                        
+
                             return _buildFloatingLabelDropdown(
                               label: AppStrings.seriesGenre.tr(),
                               hint: AppStrings.selectYourSeriesCategory.tr(),
@@ -270,9 +277,9 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
                           },
                         ),
                       ),
-                      
+
                       SizedBox(height: 30.h),
-                      
+
                       AnimatedSlideIn(
                         index: 6,
                         controller: _animationController,
@@ -285,9 +292,9 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
                           ),
                         ),
                       ),
-                      
+
                       SizedBox(height: 8.h),
-                      
+
                       AnimatedSlideIn(
                         index: 7,
                         controller: _animationController,
@@ -299,9 +306,9 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
                           ),
                         ),
                       ),
-                      
+
                       SizedBox(height: 16.h),
-                      
+
                       AnimatedSlideIn(
                         index: 8,
                         controller: _animationController,
@@ -314,60 +321,65 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
                           onTap: _pickCoverImage,
                         ),
                       ),
-                      
+
                       SizedBox(height: 40.h),
-                      
-                     AnimatedSlideIn(
-                       index: 9,
-                       controller: _animationController,
-                       child: Container(
-                         width: double.infinity,
-                         height: 56.h,
-                         decoration: BoxDecoration(
-                           gradient: const LinearGradient(
-                             colors: [
-                               AppColors.primaryColor,
-                               AppColors.secondaryColor,
-                             ],
-                             begin: Alignment.centerLeft,
-                             end: Alignment.centerRight,
-                           ),
-                           borderRadius: BorderRadius.circular(12.r),
-                         ),
-                         child: ElevatedButton(
-                           onPressed: _canProceed() ? () => _onNext(context) : null,
-                           style: ElevatedButton.styleFrom(
-                             backgroundColor: Colors.transparent,
-                             shadowColor: Colors.transparent,
-                             shape: RoundedRectangleBorder(
-                               borderRadius: BorderRadius.circular(12.r),
-                             ),
-                           ),
-                           child: Text(
-                             AppStrings.next.tr(),
-                             style: TextStyle(
-                               fontSize: 18.sp,
-                               fontWeight: FontWeight.w600,
-                               color: Colors.white,
-                             ),
-                           ),
-                         ),
-                       ),
-                     ),
-                      
+
+                      AnimatedSlideIn(
+                        index: 9,
+                        controller: _animationController,
+                        child: Container(
+                          width: double.infinity,
+                          height: 56.h,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                AppColors.primaryColor,
+                                AppColors.secondaryColor,
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: ElevatedButton(
+                            onPressed: _canProceed()
+                                ? () => _onNext(context)
+                                : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                            ),
+                            child: Text(
+                              AppStrings.next.tr(),
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
                       SizedBox(height: 20.h),
                     ],
                   ),
                 ),
               ),
             );
-          }
+          },
         ),
       ),
     );
   }
 
-  Widget _buildProgressIndicator({required int currentStep, required int totalSteps}) {
+  Widget _buildProgressIndicator({
+    required int currentStep,
+    required int totalSteps,
+  }) {
     return Row(
       children: List.generate(
         totalSteps,
@@ -400,8 +412,14 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
             controller: controller,
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14.sp),
-              contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
+              hintStyle: TextStyle(
+                color: Colors.grey.shade400,
+                fontSize: 14.sp,
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 20.w,
+                vertical: 18.h,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30.r),
                 borderSide: BorderSide(color: Colors.grey.shade300),
@@ -457,8 +475,14 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
             maxLines: 5,
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14.sp),
-              contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
+              hintStyle: TextStyle(
+                color: Colors.grey.shade400,
+                fontSize: 14.sp,
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 20.w,
+                vertical: 18.h,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16.r),
                 borderSide: BorderSide(color: Colors.grey.shade300),
@@ -519,8 +543,14 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
             dropdownColor: Colors.white,
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14.sp),
-              contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
+              hintStyle: TextStyle(
+                color: Colors.grey.shade400,
+                fontSize: 14.sp,
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 20.w,
+                vertical: 18.h,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30.r),
                 borderSide: BorderSide(color: Colors.grey.shade300),
@@ -568,87 +598,91 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
       return GestureDetector(
         onTap: onTap,
         child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          color: Colors.green.shade50,
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: Colors.green.shade200),
-        ),
-        child: Row(
-          children: [
-            if (file == null && existingUrl != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4.r),
-                child: CachedNetworkImage(
-                  imageUrl: AppUrls.storageImageLink(existingUrl),
-                  width: 40.w,
-                  height: 40.h,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            color: Colors.green.shade50,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: Colors.green.shade200),
+          ),
+          child: Row(
+            children: [
+              if (file == null && existingUrl != null)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4.r),
+                  child: CachedNetworkImage(
+                    imageUrl: AppUrls.storageImageLink(existingUrl),
                     width: 40.w,
                     height: 40.h,
-                    color: Colors.grey.shade200,
-                    child: Icon(Icons.image, size: 20.sp),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    width: 40.w,
-                    height: 40.h,
-                    color: Colors.grey.shade200,
-                    child: Icon(Icons.error, size: 20.sp),
-                  ),
-                ),
-              )
-            else
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.green.shade100),
-                ),
-                child: Icon(Icons.check, color: Colors.green, size: 20.sp),
-              ),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    file != null ? 'File Selected' : 'Existing Image',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.green.shade800,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      width: 40.w,
+                      height: 40.h,
+                      color: Colors.grey.shade200,
+                      child: Icon(Icons.image, size: 20.sp),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      width: 40.w,
+                      height: 40.h,
+                      color: Colors.grey.shade200,
+                      child: Icon(Icons.error, size: 20.sp),
                     ),
                   ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    file != null ? file.path.split('/').last : (existingUrl != null ? 'Cover Image Loaded' : 'Image Loaded'),
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.green.shade600,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                )
+              else
+                Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.green.shade100),
                   ),
-                ],
+                  child: Icon(Icons.check, color: Colors.green, size: 20.sp),
+                ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      file != null ? 'File Selected' : 'Existing Image',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.green.shade800,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      file != null
+                          ? file.path.split('/').last
+                          : (existingUrl != null
+                                ? 'Cover Image Loaded'
+                                : 'Image Loaded'),
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Colors.green.shade600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            IconButton(
-              icon: Icon(Icons.close, color: Colors.green.shade700),
-              onPressed: () {
-                setState(() {
-                  _coverImage = null;
-                   // Note: existingUrl is prop, can't clear it from here unless we update state.
-                   // But for now, user can click to pick another.
-                });
-                _pickCoverImage();
-              },
-            ),
-          ],
+              IconButton(
+                icon: Icon(Icons.close, color: Colors.green.shade700),
+                onPressed: () {
+                  setState(() {
+                    _coverImage = null;
+                    // Note: existingUrl is prop, can't clear it from here unless we update state.
+                    // But for now, user can click to pick another.
+                  });
+                  _pickCoverImage();
+                },
+              ),
+            ],
+          ),
         ),
-      ),
       );
     }
 
@@ -694,10 +728,7 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
               SizedBox(height: 8.h),
               Text(
                 subtitle,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Colors.grey.shade400,
-                ),
+                style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade400),
               ),
               SizedBox(height: 16.h),
               Container(
@@ -734,15 +765,15 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
 
   bool _canProceed() {
     if (widget.seriesToEdit != null) {
-       return _seriesTitleController.text.isNotEmpty &&
-              _aboutController.text.isNotEmpty &&
-              _selectedCategoryId != null;
-              // Cover Image optional if existing
+      return _seriesTitleController.text.isNotEmpty &&
+          _aboutController.text.isNotEmpty &&
+          _selectedCategoryId != null;
+      // Cover Image optional if existing
     }
     return _seriesTitleController.text.isNotEmpty &&
-           _aboutController.text.isNotEmpty &&
-           _selectedCategoryId != null &&
-           _coverImage != null;
+        _aboutController.text.isNotEmpty &&
+        _selectedCategoryId != null &&
+        _coverImage != null;
   }
 
   void _onNext(BuildContext context) {
@@ -750,16 +781,16 @@ class _UploadSeriesScreenState extends State<UploadSeriesScreen> with SingleTick
     if (!_canProceed()) return;
 
     if (widget.seriesToEdit != null) {
-       // Edit Logic
-       final request = UpdateSeriesRequestModel(
-          seriesId: widget.seriesToEdit!.id,
-          title: _seriesTitleController.text,
-          about: _aboutController.text,
-          categoryId: _selectedCategoryId,
-          coverPhoto: _coverImage, // Optional
-       );
-       _updateSeriesCubit.updateSeries(request);
-       return;
+      // Edit Logic
+      final request = UpdateSeriesRequestModel(
+        seriesId: widget.seriesToEdit!.id,
+        title: _seriesTitleController.text,
+        about: _aboutController.text,
+        categoryId: _selectedCategoryId,
+        coverPhoto: _coverImage, // Optional
+      );
+      _updateSeriesCubit.updateSeries(request);
+      return;
     }
 
     if (_isCreating) return;

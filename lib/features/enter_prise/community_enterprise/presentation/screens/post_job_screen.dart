@@ -18,9 +18,15 @@ import 'package:aflam/features/enter_prise/community_enterprise/data/model/jops/
 
 class PostJobScreen extends StatefulWidget {
   final VoidCallback? onJobCreated;
+  final VoidCallback? onBack;
   final JobItemModel? jobToEdit;
 
-  const PostJobScreen({super.key, this.onJobCreated, this.jobToEdit});
+  const PostJobScreen({
+    super.key,
+    this.onJobCreated,
+    this.onBack,
+    this.jobToEdit,
+  });
 
   @override
   State<PostJobScreen> createState() => _PostJobScreenState();
@@ -56,7 +62,7 @@ class _PostJobScreenState extends State<PostJobScreen> {
   Future<void> _pickLogo() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+      allowedExtensions: ['jpg', 'jpeg', 'png'],
     );
 
     if (result != null && result.files.single.path != null) {
@@ -161,16 +167,34 @@ class _PostJobScreenState extends State<PostJobScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  isEditing ? 'Edit Job' : 'add_company_info_title'.tr(),
-                  style: titleStyle,
+                // Title with back button
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: widget.onBack ?? () => Navigator.pop(context),
+                      icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                    8.horizontalSpace,
+                    Expanded(
+                      child: Text(
+                        isEditing ? 'Edit Job' : 'add_company_info_title'.tr(),
+                        style: titleStyle,
+                      ),
+                    ),
+                  ],
                 ),
                 8.verticalSpace,
-                Text(
-                  isEditing
-                      ? 'Update your job details'
-                      : 'add_company_info_subtitle'.tr(),
-                  style: subtitleStyle,
+                // Description
+                Padding(
+                  padding: EdgeInsets.only(left: 28.w),
+                  child: Text(
+                    isEditing
+                        ? 'Update your job details'
+                        : 'add_company_info_subtitle'.tr(),
+                    style: subtitleStyle,
+                  ),
                 ),
                 24.verticalSpace,
                 CustomTextField(

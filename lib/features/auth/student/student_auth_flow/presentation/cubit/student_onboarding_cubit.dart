@@ -1,7 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:convert';
 import 'package:aflam/core/app_config/prefs_keys.dart';
 import 'package:aflam/core/helpers/secure_local_storage.dart';
 import 'package:aflam/core/helpers/user_helper.dart';
@@ -103,7 +103,7 @@ class StudentOnboardingCubit extends Cubit<StudentOnboardingState> {
       if (institute.id == instituteId) {
         return institute.copyWith(isSelected: !institute.isSelected);
       }
-      return institute;
+      return institute.copyWith(isSelected: false);
     }).toList();
 
     _data = _data.copyWith(institutes: updatedInstitutes);
@@ -130,11 +130,20 @@ class StudentOnboardingCubit extends Cubit<StudentOnboardingState> {
   }
 
   void toggleCategoryExpanded(String categoryName) {
+    final targetCategory = _data.specifications.firstWhere(
+      (cat) => cat.categoryName == categoryName,
+    );
+
+    // If the clicked category is already expanded, collapse it
+    // Otherwise, expand it and collapse all others
+    final shouldExpand = !targetCategory.isExpanded;
+
     final updatedSpecs = _data.specifications.map((cat) {
       if (cat.categoryName == categoryName) {
-        return cat.copyWith(isExpanded: !cat.isExpanded);
+        return cat.copyWith(isExpanded: shouldExpand);
       }
-      return cat;
+      // Collapse all other categories
+      return cat.copyWith(isExpanded: false);
     }).toList();
 
     _data = _data.copyWith(specifications: updatedSpecs);
@@ -162,7 +171,7 @@ class StudentOnboardingCubit extends Cubit<StudentOnboardingState> {
       if (year.id == academicYearId) {
         return year.copyWith(isSelected: !year.isSelected);
       }
-      return year;
+      return year.copyWith(isSelected: false);
     }).toList();
 
     _data = _data.copyWith(academicYears: updatedYears);
@@ -508,7 +517,7 @@ class StudentOnboardingCubit extends Cubit<StudentOnboardingState> {
         institute: selectedInstitutes.isNotEmpty
             ? selectedInstitutes.first
             : '',
-        specification: selectedSpecs.isNotEmpty ? selectedSpecs.first : '',
+        specification: '',
         academicYear: selectedAcademicYear,
         skills: skills,
         country: _data.country ?? '',
@@ -522,7 +531,9 @@ class StudentOnboardingCubit extends Cubit<StudentOnboardingState> {
         videos: null,
         images: null,
         profilePhoto: profilePhoto,
-        personalInfo: _data.personalInfo,
+        personalInfo: selectedSpecs.isNotEmpty
+            ? jsonEncode({'specifications': selectedSpecs})
+            : _data.personalInfo,
         durationMonths: durationMonths,
         workItemsRoles: _data.selectedWorkItems?.isNotEmpty == true
             ? _data.selectedWorkItems

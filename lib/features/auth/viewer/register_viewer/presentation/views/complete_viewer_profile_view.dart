@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:aflam/core/di/service_locator.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
@@ -149,7 +150,7 @@ class _CompleteViewerProfileViewState extends State<CompleteViewerProfileView> {
                         builder: (context, state) {
                           if (state.status == CategoriesStatus.loading) {
                             return const Center(
-                              child: CircularProgressIndicator(),
+                              child: AnimatedLoading(),
                             );
                           }
 

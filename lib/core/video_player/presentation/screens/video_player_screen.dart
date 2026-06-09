@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -77,7 +78,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         builder: (context, state) {
           if (state is VideoPlayerLoading) {
             return Center(
-              child: CircularProgressIndicator(color: Colors.white),
+              child: AnimatedLoading(color: Colors.white),
             );
           }
 

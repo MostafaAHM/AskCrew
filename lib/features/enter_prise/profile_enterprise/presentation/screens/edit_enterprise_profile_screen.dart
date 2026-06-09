@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/features/auth/enterprise/enterprise_auth_flow/data/repository/enterprise_repository.dart';
 import 'package:aflam/features/enter_prise/profile_enterprise/data/repository/profile_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -158,7 +159,7 @@ class _EditEnterpriseProfileScreenState
                         SizedBox(height: 40.h),
 
                         if (isLoading)
-                          const Center(child: CircularProgressIndicator())
+                          const Center(child: AnimatedLoading())
                         else
                           CustomButton(
                             text: AppStrings.saveChanges.tr(),

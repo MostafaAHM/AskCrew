@@ -71,13 +71,25 @@ class _AcademicYearStepState extends State<AcademicYearStep> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   24.height,
-                  Text(
-                    'academicYear'.tr(),
-                    style: TextStyle(
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.lightTText,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        'academicYear'.tr(),
+                        style: TextStyle(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.lightTText,
+                        ),
+                      ),
+                      4.width,
+                      Text(
+                        '*',
+                        style: TextStyle(
+                          color: AppColors.secondaryColor,
+                          fontSize: 24.sp,
+                        ),
+                      ),
+                    ],
                   ),
                   8.height,
                   Text(
@@ -147,7 +159,7 @@ class _AcademicYearStepState extends State<AcademicYearStep> {
                                   children: [
                                     16.height,
                                     Text(
-                                      'graduatedYear'.tr(),
+                                      '${'graduatedYear'.tr()} (optional)',
                                       style: TextStyle(
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.w600,
@@ -189,13 +201,25 @@ class _AcademicYearStepState extends State<AcademicYearStep> {
                     ),
                   ),
                   24.height,
-                  Text(
-                    'chooseYourExperienceLevel'.tr(),
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.lightTText,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        'chooseYourExperienceLevel'.tr(),
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.lightTText,
+                        ),
+                      ),
+                      4.width,
+                      Text(
+                        '*',
+                        style: TextStyle(
+                          color: AppColors.secondaryColor,
+                          fontSize: 18.sp,
+                        ),
+                      ),
+                    ],
                   ),
                   16.height,
                   ListView.separated(

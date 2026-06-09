@@ -24,11 +24,7 @@ class AddWorkshopScreen extends StatefulWidget {
   final WorkshopResponseModel? workshopToUpdate;
   final VoidCallback? onBack;
 
-  const AddWorkshopScreen({
-    super.key,
-    this.workshopToUpdate,
-    this.onBack,
-  });
+  const AddWorkshopScreen({super.key, this.workshopToUpdate, this.onBack});
 
   @override
   State<AddWorkshopScreen> createState() => _AddWorkshopScreenState();
@@ -43,9 +39,9 @@ class _AddWorkshopScreenState extends State<AddWorkshopScreen>
   final _descriptionController = TextEditingController();
   final _locationController = TextEditingController();
   final _numberOfParticipantsController = TextEditingController();
-  
+
   String? _selectedSpecialization;
-  
+
   File? _selectedPicture;
   String? _coverImageUrl;
   DateTime? _startDate;
@@ -82,7 +78,7 @@ class _AddWorkshopScreenState extends State<AddWorkshopScreen>
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     )..forward();
-    
+
     if (widget.workshopToUpdate != null) {
       _isUpdate = true;
       _populateData();
@@ -95,7 +91,8 @@ class _AddWorkshopScreenState extends State<AddWorkshopScreen>
     _descriptionController.text = workshop.description;
     _locationController.text = workshop.location;
     _selectedSpecialization = workshop.specialization;
-    _numberOfParticipantsController.text = workshop.numberOfParticipants.toString();
+    _numberOfParticipantsController.text = workshop.numberOfParticipants
+        .toString();
     _startDate = workshop.startDate;
     _endDate = workshop.endDate;
     _coverImageUrl = workshop.coverImage;
@@ -150,23 +147,45 @@ class _AddWorkshopScreenState extends State<AddWorkshopScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Title
-                      Text(
-                        _isUpdate ? 'Update Workshop' : 'Add all info about your Workshop',
-                        style: TextStyle(
-                          fontSize: 22.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
+                      // Title with back button
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed:
+                                widget.onBack ?? () => Navigator.pop(context),
+                            icon: const Icon(
+                              Icons.arrow_back_ios_new,
+                              size: 20,
+                            ),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                          8.width,
+                          Expanded(
+                            child: Text(
+                              _isUpdate
+                                  ? 'Update Workshop'
+                                  : 'Add all info about your Workshop',
+                              style: TextStyle(
+                                fontSize: 22.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       8.height,
                       // Description
-                      Text(
-                        'Upload all data about your workshop to help other to know more about it.',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.grey.shade600,
-                          height: 1.4,
+                      Padding(
+                        padding: EdgeInsets.only(left: 28.w),
+                        child: Text(
+                          'Upload all data about your workshop to help other to know more about it.',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.grey.shade600,
+                            height: 1.4,
+                          ),
                         ),
                       ),
                       24.height,
@@ -301,14 +320,6 @@ class _AddWorkshopScreenState extends State<AddWorkshopScreen>
                           return CustomButton(
                             text: _isUpdate ? 'Update' : 'Confirm',
                             isBackgroundGradient: true,
-                            gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: [
-                                _orange,
-                                AppColors.primaryColor,
-                              ],
-                            ),
                             onTap: isLoading ? null : _onConfirm,
                           );
                         },
@@ -342,7 +353,6 @@ class _AddWorkshopScreenState extends State<AddWorkshopScreen>
     );
   }
 
-
   Widget _buildDateField({
     required String label,
     required DateTime? date,
@@ -368,10 +378,7 @@ class _AddWorkshopScreenState extends State<AddWorkshopScreen>
             decoration: BoxDecoration(
               color: const Color(0xFFF9FAFB),
               borderRadius: BorderRadius.circular(30.r),
-              border: Border.all(
-                color: const Color(0xFFD0D5DD),
-                width: 1,
-              ),
+              border: Border.all(color: const Color(0xFFD0D5DD), width: 1),
             ),
             child: Row(
               children: [
@@ -423,9 +430,7 @@ class _AddWorkshopScreenState extends State<AddWorkshopScreen>
             _endDate = picked;
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('endDateMustBeAfterStart'.tr()),
-              ),
+              SnackBar(content: Text('endDateMustBeAfterStart'.tr())),
             );
           }
         }
@@ -439,96 +444,103 @@ class _AddWorkshopScreenState extends State<AddWorkshopScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        InkWell(
-          onTap: _pickPicture,
-          child: DashedBorderContainer(
-            borderColor: hasPicture
-                ? Colors.transparent
-                : Colors.grey.shade300,
-            borderWidth: hasPicture ? 0 : 1.5,
-            borderRadius: 12.r,
-            padding: hasPicture ? EdgeInsets.zero : const EdgeInsets.all(16.0),
-            backgroundColor: Colors.white,
-            child: Column(
-              children: [
-                if (hasPicture) ...[
-                  // Show selected image/file
-                  Container(
-                    width: double.infinity,
-                    height: 200.h,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.r),
-                      image: _selectedPicture != null
-                          ? DecorationImage(
-                              image: FileImage(_selectedPicture!),
+        SizedBox(
+          width: double.infinity,
+          child: InkWell(
+            onTap: _pickPicture,
+            child: DashedBorderContainer(
+              borderColor: hasPicture
+                  ? Colors.transparent
+                  : Colors.grey.shade300,
+              borderWidth: hasPicture ? 0 : 1.5,
+              borderRadius: 12.r,
+              padding: hasPicture
+                  ? EdgeInsets.zero
+                  : const EdgeInsets.all(16.0),
+              backgroundColor: Colors.white,
+              child: Column(
+                children: [
+                  if (hasPicture) ...[
+                    // Show selected image/file
+                    Container(
+                      width: double.infinity,
+                      height: 200.h,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.r),
+                        image: _selectedPicture != null
+                            ? DecorationImage(
+                                image: FileImage(_selectedPicture!),
+                                fit: BoxFit.cover,
+                              )
+                            : _coverImageUrl != null
+                            ? DecorationImage(
+                                image: CachedNetworkImageProvider(
+                                  _coverImageUrl!,
+                                ),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                      ),
+                      child: _selectedPicture == null && _coverImageUrl != null
+                          ? CachedNetworkImage(
+                              imageUrl: _coverImageUrl!,
                               fit: BoxFit.cover,
                             )
-                          : _coverImageUrl != null
-                              ? DecorationImage(
-                                  image: CachedNetworkImageProvider(_coverImageUrl!),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
+                          : null,
                     ),
-                    child: _selectedPicture == null && _coverImageUrl != null
-                        ? CachedNetworkImage(
-                            imageUrl: _coverImageUrl!,
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                  ),
-                ] else ...[
-                  // Upload prompt
-                  RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Colors.grey.shade600,
+                  ] else ...[
+                    // Upload prompt
+                    RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: Colors.grey.shade600,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: 'choosePhotoToUpload'.tr(),
+                            style: TextStyle(
+                              color: _orange,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          TextSpan(
+                            text: '*',
+                            style: TextStyle(
+                              color: _orange,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
-                      children: [
-                        TextSpan(
-                          text: 'choosePhotoOrFileToUpload'.tr(),
-                          style: TextStyle(
-                            color: _orange,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        TextSpan(
-                          text: '*',
-                          style: TextStyle(
-                            color: _orange,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
                     ),
-                  ),
-                  8.height,
-                  Text(
-                    'supportedFormatsJpegPdf'.tr(),
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.grey.shade500,
+                    8.height,
+                    Text(
+                      'supportedFormatsJpegPng'.tr(),
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Colors.grey.shade500,
+                      ),
                     ),
-                  ),
-                  16.height,
-                  // Upload Icon
-                  Container(
-                    width: 56.w,
-                    height: 56.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _orange.withOpacity(0.1),
+                    16.height,
+                    // Upload Icon
+                    Container(
+                      width: 56.w,
+                      height: 56.h,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _orange.withOpacity(0.1),
+                      ),
+                      child: Icon(
+                        Icons.arrow_upward,
+                        size: 28.w,
+                        color: _orange,
+                      ),
                     ),
-                    child: Icon(
-                      Icons.arrow_upward,
-                      size: 28.w,
-                      color: _orange,
-                    ),
-                  ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),
@@ -540,7 +552,7 @@ class _AddWorkshopScreenState extends State<AddWorkshopScreen>
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'pdf', 'png'],
+        allowedExtensions: ['jpg', 'jpeg', 'png'],
       );
 
       if (result != null && result.files.single.path != null) {
@@ -564,29 +576,23 @@ class _AddWorkshopScreenState extends State<AddWorkshopScreen>
     }
 
     if (_selectedPicture == null && _coverImageUrl == null && !_isUpdate) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('pleaseUploadPicture'.tr()),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('pleaseUploadPicture'.tr())));
       return;
     }
 
     if (_startDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('pleaseSelectStartDate'.tr()),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('pleaseSelectStartDate'.tr())));
       return;
     }
 
     if (_endDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('pleaseSelectEndDate'.tr()),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('pleaseSelectEndDate'.tr())));
       return;
     }
 
@@ -595,9 +601,7 @@ class _AddWorkshopScreenState extends State<AddWorkshopScreen>
     final numberOfParticipants = int.tryParse(participantsText);
     if (numberOfParticipants == null || numberOfParticipants <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('pleaseEnterValidParticipants'.tr()),
-        ),
+        SnackBar(content: Text('pleaseEnterValidParticipants'.tr())),
       );
       return;
     }

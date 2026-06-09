@@ -31,10 +31,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSize {
   final bool? centerTitle, isShown;
   factory CustomAppBar.logoSkipAppBar({Function()? onTap}) => CustomAppBar(
     leading: SkipButton(onTap: onTap),
-    customTitle: AppLogo.svg(),
+    customTitle: AppLogo.svg(width: 150.w, height: 50.h),
   );
   factory CustomAppBar.logoAppBar() =>
-      CustomAppBar(leading: null, customTitle: AppLogo.svg());
+      CustomAppBar(leading: null, customTitle: AppLogo.svg(width: 150.w, height: 50.h));
   factory CustomAppBar.backAppBar({
     String? title,
     PreferredSizeWidget? bottomWidget,
@@ -50,7 +50,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSize {
     centerTitle: centerTitle ?? showLogoInBackAppBar,
     leading: leading ?? CustomBackButton(onPressed: onBackPressed),
     customTitle: showLogoInBackAppBar
-        ? AppLogo.png(height: 52.h, width: 78)
+        ? AppLogo.png(height: 70.h, width: 100.w)
         : null,
     title: showLogoInBackAppBar ? null : title,
     bottomWidget: bottomWidget,
@@ -65,7 +65,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSize {
     centerTitle: true,
     isShown: isShown,
     bottomWidget: bottomWidget,
-    customTitle: GestureDetector(onTap: onLogoTap, child: AppLogo.svg()),
+    customTitle: GestureDetector(onTap: onLogoTap, child: AppLogo.svg(width: 150.w, height: 50.h)),
   );
   @override
   Widget build(BuildContext context) {

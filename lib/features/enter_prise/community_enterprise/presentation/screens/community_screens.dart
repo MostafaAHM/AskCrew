@@ -129,6 +129,21 @@ class _CommunityScreensState extends State<CommunityScreens> {
                             8.verticalSpace,
                             Expanded(
                               child: BlocBuilder<QuestionsCubit, QuestionsState>(
+                                buildWhen: (prev, curr) =>
+                                    curr is QuestionsLoading ||
+                                    curr is QuestionsSuccess ||
+                                    curr is QuestionsFailure ||
+                                    curr is AnswersLoading ||
+                                    curr is AnswersSuccess ||
+                                    curr is AnswersFailure ||
+                                    curr is DeleteQuestionSuccess ||
+                                    curr is DeleteQuestionFailure ||
+                                    curr is UpdateQuestionsSuccess ||
+                                    curr is UpdateQuestionsFailure ||
+                                    curr is CreateAnswerSuccess ||
+                                    curr is CreateAnswerFailure ||
+                                    curr is UpdateAnswerSuccess ||
+                                    curr is UpdateAnswerFailure,
                                 builder: (context, state) {
                                   if (_selectedQuestion == null) {
                                     if (state is QuestionsLoading) {
@@ -183,7 +198,6 @@ class _CommunityScreensState extends State<CommunityScreens> {
 
                                           return CommunityQuestionCard(
                                             data: item,
-                                            orange: orange,
                                             currentUserId: _currentUserId,
                                             questionAuthorId: q.author,
                                             onDelete: (id) {
@@ -239,7 +253,6 @@ class _CommunityScreensState extends State<CommunityScreens> {
                           bottom: 120.h,
                           child: AskQuestionFab(
                             key: const ValueKey('fab_questions'),
-                            orange: orange,
                             borderRadius: borderRadius,
                           ),
                         ),
@@ -339,8 +352,7 @@ class _CommunityScreensState extends State<CommunityScreens> {
                                   30.verticalSpace,
                                   HomeTopBar(showChat: true),
                                   10.verticalSpace,
-                                  if (!isStudent)
-                                    CommunityTopTabs(orange: orange),
+                                  if (!isStudent) CommunityTopTabs(),
                                   8.verticalSpace,
                                   Expanded(
                                     child: isStudent
@@ -417,7 +429,6 @@ class _CommunityScreensState extends State<CommunityScreens> {
 
                                                       return CommunityQuestionCard(
                                                         data: item,
-                                                        orange: orange,
                                                         currentUserId:
                                                             _currentUserId,
                                                         questionAuthorId:
@@ -477,6 +488,28 @@ class _CommunityScreensState extends State<CommunityScreens> {
                                                 QuestionsCubit,
                                                 QuestionsState
                                               >(
+                                                buildWhen: (prev, curr) =>
+                                                    curr is QuestionsLoading ||
+                                                    curr is QuestionsSuccess ||
+                                                    curr is QuestionsFailure ||
+                                                    curr is AnswersLoading ||
+                                                    curr is AnswersSuccess ||
+                                                    curr is AnswersFailure ||
+                                                    curr
+                                                        is DeleteQuestionSuccess ||
+                                                    curr
+                                                        is DeleteQuestionFailure ||
+                                                    curr
+                                                        is UpdateQuestionsSuccess ||
+                                                    curr
+                                                        is UpdateQuestionsFailure ||
+                                                    curr
+                                                        is CreateAnswerSuccess ||
+                                                    curr
+                                                        is CreateAnswerFailure ||
+                                                    curr
+                                                        is UpdateAnswerSuccess ||
+                                                    curr is UpdateAnswerFailure,
                                                 builder: (context, state) {
                                                   if (_selectedQuestion ==
                                                       null) {
@@ -558,7 +591,6 @@ class _CommunityScreensState extends State<CommunityScreens> {
 
                                                           return CommunityQuestionCard(
                                                             data: item,
-                                                            orange: orange,
                                                             currentUserId:
                                                                 _currentUserId,
                                                             questionAuthorId:
@@ -622,7 +654,6 @@ class _CommunityScreensState extends State<CommunityScreens> {
 
                                               // ===== Jobs tab
                                               CommunityJobsTab(
-                                                orange: orange,
                                                 lightPill: lightPill,
                                                 isAddingJob: isAddingJob,
                                                 isStudent: isStudent,
@@ -702,7 +733,6 @@ class _CommunityScreensState extends State<CommunityScreens> {
                                       _selectedQuestion == null) {
                                     fab = AskQuestionFab(
                                       key: const ValueKey('fab_questions'),
-                                      orange: orange,
                                       borderRadius: borderRadius,
                                     );
                                   } else if (tabController.index == 1 &&
@@ -712,7 +742,6 @@ class _CommunityScreensState extends State<CommunityScreens> {
                                       _selectedFilter == JobsFilter.yourOwn) {
                                     fab = PostJobFab(
                                       key: const ValueKey('fab_jobs'),
-                                      orange: orange,
                                       borderRadius: borderRadius,
                                       onTap: () {
                                         setState(() {

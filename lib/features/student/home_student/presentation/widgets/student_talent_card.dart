@@ -24,84 +24,103 @@ class StudentTalentCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 120.w,
-        height: 140.h,
+        width: 145.w,
+        height: 100.h,
         decoration: BoxDecoration(
-          color: AppColors.whiteColor,
-          borderRadius: BorderRadius.circular(12.r),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: AppColors.borderColor,
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Row(
           children: [
+            // Profile image section with primary gradient
             Container(
-              width: 60.w,
-              height: 60.w,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
+              width: 65.w,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.primaryColor.withOpacity(0.15),
+                    AppColors.secondaryColor.withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16.r),
+                  bottomLeft: Radius.circular(16.r),
+                ),
               ),
-              child: ClipOval(
-                child: imageUrl != null && imageUrl!.isNotEmpty
-                    ? CustomCachedNetworkImage(
-                        url: imageUrl!,
-                        fit: BoxFit.cover,
-                      )
-                    : Container(
-                        color: AppColors.lightBGColor,
-                        child: Icon(
-                          Icons.person,
-                          size: 30.sp,
-                          color: AppColors.greyText,
-                        ),
+              child: Center(
+                child: Container(
+                  width: 42.w,
+                  height: 42.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 2.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
                       ),
-              ),
-            ),
-            8.height,
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: Text(
-                name,
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.lightTText,
-                  fontFamily: 'Tajawal',
-                  height: 1.2,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            4.height,
-            if (role.isNotEmpty)
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 8.w),
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-                decoration: BoxDecoration(
-                  color: AppColors.secondaryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(6.r),
-                ),
-                child: Text(
-                  role,
-                  style: TextStyle(
-                    fontSize: 10.sp,
-                    color: AppColors.secondaryColor,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'Tajawal',
+                    ],
                   ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  child: ClipOval(
+                    child: imageUrl != null && imageUrl!.isNotEmpty
+                        ? CustomCachedNetworkImage(
+                            url: imageUrl!,
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            color: AppColors.lightBGColor,
+                            child: Icon(
+                              Icons.person_outline,
+                              size: 22.sp,
+                              color: AppColors.greyText,
+                            ),
+                          ),
+                  ),
                 ),
               ),
+            ),
+            // Content section
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Name
+                    Text(
+                      name,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.lightTText,
+                        height: 1.1,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

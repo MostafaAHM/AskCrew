@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
@@ -23,7 +24,6 @@ class ChatScreen extends StatefulWidget {
   final int roomId;
   final String roomName;
   final String? otherUserImage;
-  final String? specification;
   final UserModel? otherUser;
 
   const ChatScreen({
@@ -31,7 +31,6 @@ class ChatScreen extends StatefulWidget {
     required this.roomId,
     required this.roomName,
     this.otherUserImage,
-    this.specification,
     this.otherUser,
   });
 
@@ -225,15 +224,6 @@ class _ChatScreenState extends State<ChatScreen> {
                     color: const Color(0xFF333333),
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
-                  ),
-                ),
-                4.verticalSpace,
-                Text(
-                  widget.specification ?? AppStrings.producer.tr(),
-                  style: TextStyle(
-                    color: Colors.grey[500],
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ],

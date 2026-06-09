@@ -130,11 +130,20 @@ class EnterpriseOnboardingCubit extends Cubit<EnterpriseOnboardingState> {
   }
 
   void toggleCategoryExpanded(String categoryName) {
+    final targetCategory = _data.specifications.firstWhere(
+      (cat) => cat.categoryName == categoryName,
+    );
+
+    // If the clicked category is already expanded, collapse it
+    // Otherwise, expand it and collapse all others
+    final shouldExpand = !targetCategory.isExpanded;
+
     final updatedSpecs = _data.specifications.map((cat) {
       if (cat.categoryName == categoryName) {
-        return cat.copyWith(isExpanded: !cat.isExpanded);
+        return cat.copyWith(isExpanded: shouldExpand);
       }
-      return cat;
+      // Collapse all other categories
+      return cat.copyWith(isExpanded: false);
     }).toList();
 
     _data = _data.copyWith(specifications: updatedSpecs);

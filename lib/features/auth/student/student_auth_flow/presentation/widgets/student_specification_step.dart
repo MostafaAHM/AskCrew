@@ -66,13 +66,25 @@ class _StudentSpecificationStepState extends State<StudentSpecificationStep> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   24.height,
-                  Text(
-                    'selectYourInstituteCollege'.tr(),
-                    style: TextStyle(
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.lightTText,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        'selectYourInstituteCollege'.tr(),
+                        style: TextStyle(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.lightTText,
+                        ),
+                      ),
+                      4.width,
+                      Text(
+                        '*',
+                        style: TextStyle(
+                          color: AppColors.secondaryColor,
+                          fontSize: 24.sp,
+                        ),
+                      ),
+                    ],
                   ),
                   8.height,
                   Text(
@@ -107,13 +119,25 @@ class _StudentSpecificationStepState extends State<StudentSpecificationStep> {
                     },
                   ),
                   40.height,
-                  Text(
-                    'chooseYourSpecification'.tr(),
-                    style: TextStyle(
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.lightTText,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        'chooseYourSpecification'.tr(),
+                        style: TextStyle(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.lightTText,
+                        ),
+                      ),
+                      4.width,
+                      Text(
+                        '*',
+                        style: TextStyle(
+                          color: AppColors.secondaryColor,
+                          fontSize: 24.sp,
+                        ),
+                      ),
+                    ],
                   ),
                   8.height,
                   Text(

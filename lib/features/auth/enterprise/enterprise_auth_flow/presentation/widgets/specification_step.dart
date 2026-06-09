@@ -65,13 +65,25 @@ class _SpecificationStepState extends State<SpecificationStep> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   24.height,
-                  Text(
-                    AppStrings.chooseYourSpecification.tr(),
-                    style: TextStyle(
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.lightTText,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        AppStrings.chooseYourSpecification.tr(),
+                        style: TextStyle(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.lightTText,
+                        ),
+                      ),
+                      4.width,
+                      Text(
+                        '*',
+                        style: TextStyle(
+                          color: AppColors.secondaryColor,
+                          fontSize: 24.sp,
+                        ),
+                      ),
+                    ],
                   ),
                   8.height,
                   Text(

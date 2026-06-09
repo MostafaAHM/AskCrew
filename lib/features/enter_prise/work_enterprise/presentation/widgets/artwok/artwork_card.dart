@@ -1,3 +1,4 @@
+import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,6 @@ class ArtworkCard extends StatelessWidget {
   final String date;
   final String views;
   final String imageUrl;
-  final Color orange;
   final String? price;
   final bool? isReady;
   final VoidCallback? onDelete;
@@ -30,7 +30,6 @@ class ArtworkCard extends StatelessWidget {
     required this.date,
     required this.views,
     required this.imageUrl,
-    required this.orange,
     this.isOwner = false,
     this.price,
     this.isReady,
@@ -96,7 +95,7 @@ class ArtworkCard extends StatelessWidget {
                     6.height,
                     Row(
                       children: [
-                        Icon(Icons.star_rounded, size: 16.sp, color: orange),
+                        Icon(Icons.star_rounded, size: 16.sp, color: AppColors.primaryColor),
                         4.width,
                         Text(
                           rating.toStringAsFixed(1),
@@ -111,7 +110,7 @@ class ArtworkCard extends StatelessWidget {
                     4.height,
                     Row(
                       children: [
-                        Icon(Icons.group, size: 14.sp, color: orange),
+                        Icon(Icons.group, size: 14.sp, color: AppColors.primaryColor),
                         4.width,
                         Flexible(
                           child: RichText(
@@ -132,7 +131,7 @@ class ArtworkCard extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 11.sp,
                                     fontWeight: FontWeight.w500,
-                                    color: orange,
+                                    color: AppColors.primaryColor,
                                     fontFamily: 'Montserrat',
                                   ),
                                 ),
@@ -215,11 +214,11 @@ class ArtworkCard extends StatelessWidget {
                             child: Container(
                               padding: EdgeInsets.all(6.w),
                               decoration: BoxDecoration(
+                                gradient: AppColors.primaryGradient,
                                 shape: BoxShape.circle,
-                                color: orange,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: orange.withOpacity(0.3),
+                                    color: AppColors.primaryColor.withOpacity(0.3),
                                     blurRadius: 6,
                                     offset: const Offset(0, 2),
                                   ),
@@ -252,7 +251,7 @@ class ArtworkCard extends StatelessWidget {
                       Icon(
                         Icons.visibility_outlined,
                         size: 16.sp,
-                        color: orange,
+                        color: AppColors.primaryColor,
                       ),
                       4.width,
                       Text(

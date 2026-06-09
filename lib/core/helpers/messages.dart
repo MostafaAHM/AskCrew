@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../app_config/app_colors.dart';
+import '../widgets/animated_loading/animated_loading.dart';
 
 class AppMessages {
   static bool _isLoading = false;
@@ -16,7 +17,7 @@ class AppMessages {
       barrierDismissible: false,
       builder: (_) => const PopScope(
         canPop: false,
-        child: Center(child: CircularProgressIndicator.adaptive()),
+        child: Center(child: AnimatedLoading()),
       ),
     );
   }

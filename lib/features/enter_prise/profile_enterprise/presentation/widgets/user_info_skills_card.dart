@@ -33,6 +33,7 @@ class UserInfoSkillsCard extends StatefulWidget {
   final int? totalBookings;
   final int? topWorkView;
   final Map<String, dynamic>? plan;
+  final String? specialization;
 
   const UserInfoSkillsCard({
     super.key,
@@ -55,6 +56,7 @@ class UserInfoSkillsCard extends StatefulWidget {
     this.totalBookings,
     this.topWorkView,
     this.plan,
+    this.specialization,
   });
 
   @override
@@ -87,6 +89,14 @@ class _UserInfoSkillsCardState extends State<UserInfoSkillsCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Specialization
+          if (widget.specialization != null && widget.specialization!.isNotEmpty) ...[
+            InfoRowWidget(
+              icon: Icons.work_outline,
+              text: widget.specialization!,
+            ),
+            Divider(height: 1, thickness: 1.5, color: Colors.grey[400]),
+          ],
           // Location, Education, Profession
           InfoRowWidget(
             icon: Icons.location_on_outlined,
@@ -156,39 +166,7 @@ class _UserInfoSkillsCardState extends State<UserInfoSkillsCard> {
                   : null,
             ),
           ],
-          // Plan Features Section
-          if (widget.plan != null &&
-              widget.plan!['features'] != null &&
-              (widget.plan!['features'] as List).isNotEmpty) ...[
-            SizedBox(height: 16.h),
-            Text(
-              'plan_features'.tr(),
-              style: TextStyle(
-                color: AppColors.primaryColor,
-                fontSize: 19.sp,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            ...((widget.plan!['features'] as List).map<Widget>((feature) {
-              final featureMap = feature as Map<String, dynamic>;
-              final featureKey =
-                  featureMap['feature_key_display']?.toString() ??
-                  featureMap['feature_key']?.toString() ??
-                  '';
-              final limit = featureMap['limit'];
-              final limitText = limit != null ? ' ($limit)' : ' (Unlimited)';
-              return Column(
-                children: [
-                  InfoRowWidget(
-                    icon: Icons.check_circle_outline,
-                    text: '$featureKey$limitText',
-                  ),
-                  Divider(height: 1, thickness: 1.5, color: Colors.grey[400]),
-                ],
-              );
-            }).toList()),
-          ],
+
           // Statistics Section
           if ((widget.views != null && widget.views! > 0) ||
               (widget.totalBookings != null && widget.totalBookings! > 0) ||

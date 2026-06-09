@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/config/routes/routes.dart';
 import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:aflam/core/di/service_locator.dart';
@@ -90,7 +91,7 @@ class RecentTransactionsScreen extends StatelessWidget {
                       builder: (context, state) {
                         if (state is RecentTransactionsLoading) {
                           return const Center(
-                            child: CircularProgressIndicator(),
+                            child: AnimatedLoading(),
                           );
                         }
                         if (state is RecentTransactionsError) {

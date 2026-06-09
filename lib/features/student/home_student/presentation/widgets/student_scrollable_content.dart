@@ -15,9 +15,9 @@ import 'package:intl/intl.dart';
 import 'package:aflam/features/viewer/home_viewer/data/model/movies_with_series_model.dart';
 
 import '../../../../../config/routes/routes.dart';
+import '../../../../../core/app_config/app_colors.dart';
 import '../cubit/home_student_cubit.dart';
 import '../cubit/home_student_state.dart';
-import 'student_talent_card.dart';
 import 'student_workshop_card.dart';
 import '../../../../shared/talent_profile/presentation/screens/talent_profile_args.dart';
 
@@ -178,7 +178,7 @@ class StudentScrollableContent extends StatelessWidget {
                     context.pushNamed(Routes.findTalent, extra: state.talents);
                   },
                   child: SizedBox(
-                    height: 140.h,
+                    height: 168.h,
                     child: state.talents.isEmpty
                         ? Center(
                             child: Text(
@@ -197,10 +197,13 @@ class StudentScrollableContent extends StatelessWidget {
                             separatorBuilder: (_, __) => SizedBox(width: 12.w),
                             itemBuilder: (context, index) {
                               final talent = state.talents[index];
-                              return StudentTalentCard(
+                              return _EnterpriseTalentCard(
                                 name: talent.name,
                                 role: talent.role,
                                 imageUrl: talent.imageUrl,
+                                isVerified: talent.waterMark,
+                                rating: talent.rating,
+                                specialization: talent.specialization,
                                 onTap: () {
                                   final userId = int.tryParse(talent.id);
                                   if (userId != null) {
@@ -226,7 +229,7 @@ class StudentScrollableContent extends StatelessWidget {
                     );
                   },
                   child: SizedBox(
-                    height: 140.h,
+                    height: 115.h,
                     child: state.students.isEmpty
                         ? Center(
                             child: Text(
@@ -245,10 +248,13 @@ class StudentScrollableContent extends StatelessWidget {
                             separatorBuilder: (_, __) => SizedBox(width: 12.w),
                             itemBuilder: (context, index) {
                               final student = state.students[index];
-                              return StudentTalentCard(
+                              return _EnterpriseStudentCard(
                                 name: student.name,
                                 role: student.role,
                                 imageUrl: student.imageUrl,
+                                isVerified: student.waterMark,
+                                rating: student.rating,
+                                specialization: student.specialization,
                                 onTap: () {
                                   final userId = int.tryParse(student.id);
                                   if (userId != null) {
@@ -336,4 +342,488 @@ class _TrendingMovieCard extends StatelessWidget {
       ),
     );
   }
+}
+
+// New Vertical Design - Avatar Top with Content Below (from Enterprise)
+class _EnterpriseTalentCard extends StatelessWidget {
+  final String name;
+  final String role;
+  final String? imageUrl;
+  final bool isVerified;
+  final double rating;
+  final String specialization;
+  final VoidCallback onTap;
+
+  const _EnterpriseTalentCard({
+    required this.name,
+    required this.role,
+    this.imageUrl,
+    this.isVerified = false,
+    this.rating = 0.0,
+    this.specialization = '',
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 140.w,
+        height: 168.h,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primaryColor.withOpacity(0.12),
+              blurRadius: 14,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Gradient top background
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 60.h,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppColors.primaryColor.withOpacity(0.18),
+                      AppColors.secondaryColor.withOpacity(0.12),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.r),
+                    topRight: Radius.circular(16.r),
+                  ),
+                ),
+              ),
+            ),
+            // Content
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Avatar with verified badge
+                  Stack(
+                    children: [
+                      Container(
+                        width: 54.w,
+                        height: 54.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          border: Border.all(
+                            color: AppColors.primaryColor.withOpacity(0.25),
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primaryColor.withOpacity(0.1),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: imageUrl != null && imageUrl!.isNotEmpty
+                              ? CustomCachedNetworkImage(
+                                  url: imageUrl!,
+                                  fit: BoxFit.cover,
+                                )
+                              : Icon(
+                                  Icons.person,
+                                  size: 26.sp,
+                                  color: AppColors.primaryColor.withOpacity(
+                                    0.45,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      if (isVerified)
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: EdgeInsets.all(2.5.w),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppColors.secondaryColor,
+                                  AppColors.primaryColor,
+                                ],
+                              ),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 1.5,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.secondaryColor.withOpacity(
+                                    0.25,
+                                  ),
+                                  blurRadius: 3,
+                                  offset: const Offset(0, 1.5),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.verified,
+                              color: Colors.white,
+                              size: 10.sp,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  SizedBox(height: 6.h),
+                  // Name
+                  Text(
+                    name,
+                    style: TextStyle(
+                      fontSize: 11.5.sp,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.lightTText,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 4.5.h),
+                  // Rating stars
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ...List.generate(5, (index) {
+                        return Icon(
+                          index < rating.round()
+                              ? Icons.star_rounded
+                              : Icons.star_border_rounded,
+                          color: AppColors.secondaryColor,
+                          size: 9.5.sp,
+                        );
+                      }),
+                      SizedBox(width: 4.w),
+                      if (rating > 0)
+                        Text(
+                          rating.toStringAsFixed(1),
+                          style: TextStyle(
+                            fontSize: 9.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.secondaryColor,
+                          ),
+                        ),
+                    ],
+                  ),
+                  SizedBox(height: 4.5.h),
+                  // Role tag
+                  if (role.isNotEmpty)
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 7.w,
+                        vertical: 2.5.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(9.r),
+                      ),
+                      child: Text(
+                        role,
+                        style: TextStyle(
+                          fontSize: 8.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primaryColor,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  // Specialization
+                  if (specialization.isNotEmpty)
+                    Padding(
+                      padding: EdgeInsets.only(top: 3.h),
+                      child: Text(
+                        specialization,
+                        style: TextStyle(
+                          fontSize: 7.5.sp,
+                          color: AppColors.greyText,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Brand new design 2 - Modern Glass Effect Card with Diagonal Cut (from Enterprise)
+class _EnterpriseStudentCard extends StatelessWidget {
+  final String name;
+  final String role;
+  final String? imageUrl;
+  final bool isVerified;
+  final double rating;
+  final String specialization;
+  final VoidCallback onTap;
+
+  const _EnterpriseStudentCard({
+    required this.name,
+    required this.role,
+    this.imageUrl,
+    this.isVerified = false,
+    this.rating = 0.0,
+    this.specialization = '',
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 200.w,
+        height: 115.h,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Diagonal accent corner
+            Positioned(
+              top: 0,
+              right: 0,
+              child: CustomPaint(
+                size: Size(60.w, 60.h),
+                painter: DiagonalPainter(),
+              ),
+            ),
+            // Content
+            Padding(
+              padding: EdgeInsets.all(12.w),
+              child: Row(
+                children: [
+                  // Image Section
+                  Container(
+                    width: 65.w,
+                    height: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14.r),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          AppColors.secondaryColor.withOpacity(0.15),
+                          AppColors.primaryColor.withOpacity(0.1),
+                        ],
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 50.w,
+                            height: 50.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.secondaryColor.withOpacity(
+                                    0.1,
+                                  ),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: ClipOval(
+                              child: imageUrl != null && imageUrl!.isNotEmpty
+                                  ? CustomCachedNetworkImage(
+                                      url: imageUrl!,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Icon(
+                                      Icons.school,
+                                      size: 24.sp,
+                                      color: AppColors.secondaryColor
+                                          .withOpacity(0.5),
+                                    ),
+                            ),
+                          ),
+                        ),
+                        if (isVerified)
+                          Positioned(
+                            top: 2.h,
+                            right: 2.w,
+                            child: Container(
+                              padding: EdgeInsets.all(4.w),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppColors.secondaryColor,
+                                    AppColors.primaryColor,
+                                  ],
+                                ),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.secondaryColor.withOpacity(
+                                      0.3,
+                                    ),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                Icons.verified,
+                                color: Colors.white,
+                                size: 10.sp,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  10.width,
+                  // Text Content
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          name,
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w900,
+                            color: AppColors.lightTText,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        4.height,
+                        // Role badge
+                        if (role.isNotEmpty)
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8.w,
+                              vertical: 3.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.secondaryColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(6.r),
+                              border: Border.all(
+                                color: AppColors.secondaryColor.withOpacity(
+                                  0.2,
+                                ),
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              role,
+                              style: TextStyle(
+                                fontSize: 8.5.sp,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.secondaryColor,
+                              ),
+                            ),
+                          ),
+                        5.height,
+                        // Stars
+                        Row(
+                          children: [
+                            ...List.generate(5, (index) {
+                              return Icon(
+                                index < rating.round()
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: AppColors.secondaryColor,
+                                size: 10.sp,
+                              );
+                            }),
+                            5.width,
+                            if (rating > 0)
+                              Text(
+                                rating.toStringAsFixed(1),
+                                style: TextStyle(
+                                  fontSize: 9.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.secondaryColor,
+                                ),
+                              ),
+                          ],
+                        ),
+                        4.height,
+                        // Specialization
+                        if (specialization.isNotEmpty)
+                          Text(
+                            specialization,
+                            style: TextStyle(
+                              fontSize: 8.5.sp,
+                              color: AppColors.greyText,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Custom painter for diagonal corner
+class DiagonalPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = AppColors.secondaryColor.withOpacity(0.15)
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+    path.moveTo(size.width, 0);
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, 0);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

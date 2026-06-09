@@ -1,3 +1,5 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
+import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:aflam/core/app_config/app_strings.dart';
 import 'package:aflam/core/di/service_locator.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
@@ -195,7 +197,7 @@ class _BookingEnterpriseScreenState extends State<BookingEnterpriseScreen>
                                 );
                               });
                               return const Center(
-                                child: CircularProgressIndicator(),
+                                child: AnimatedLoading(),
                               );
                             }
 
@@ -226,35 +228,50 @@ class _BookingEnterpriseScreenState extends State<BookingEnterpriseScreen>
 
         return Positioned(
           right: 12.w,
-          bottom: 50.h,
+          bottom: 40.h,
           child: AnimatedSlideIn(
             index: 3,
             controller: _animationController,
-            child: Material(
-              color: _orange,
-              elevation: 5,
-              borderRadius: borderRadius,
-              child: InkWell(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
                 borderRadius: borderRadius,
-                onTap: () async {
-                  final result = await context.pushNamed(Routes.addBooking);
-                  if (result == true && context.mounted) {
-                    context.read<BookingCubit>().getBookingItems(
-                      refresh: true,
-                      mine: _isMineSelected,
-                      suggested: !_isMineSelected,
-                      types: _selectedTypes,
-                    );
-                  }
-                },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 18.w,
-                    vertical: 12.h,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primaryColor.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                    spreadRadius: 0,
                   ),
-                  child: Text(
-                    AppStrings.addBooking.tr(),
-                    style: FontStyles.headline16.copyWith(color: Colors.white),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                borderRadius: borderRadius,
+                child: InkWell(
+                  borderRadius: borderRadius,
+                  onTap: () async {
+                    final result = await context.pushNamed(Routes.addBooking);
+                    if (result == true && context.mounted) {
+                      context.read<BookingCubit>().getBookingItems(
+                        refresh: true,
+                        mine: _isMineSelected,
+                        suggested: !_isMineSelected,
+                        types: _selectedTypes,
+                      );
+                    }
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 18.w,
+                      vertical: 12.h,
+                    ),
+                    child: Text(
+                      AppStrings.addBooking.tr(),
+                      style: FontStyles.headline16.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               ),

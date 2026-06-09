@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/core/app_config/app_strings.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -78,7 +79,7 @@ class VerificationTile extends StatelessWidget {
                 SizedBox(
                   width: 20.w,
                   height: 20.h,
-                  child: const CircularProgressIndicator(strokeWidth: 2),
+                  child: const AnimatedLoading(),
                 )
               else if (!isVerified)
                 Container(

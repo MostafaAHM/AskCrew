@@ -16,7 +16,6 @@ import 'package:aflam/core/helpers/user_helper.dart';
 class UserProfileHeaderCard extends StatelessWidget {
   final UserModel? user;
   final String userName;
-  final String userSpecification;
   final String? profilePhoto;
   final double? rating;
   final int? reviewCount;
@@ -28,7 +27,6 @@ class UserProfileHeaderCard extends StatelessWidget {
     super.key,
     required this.user,
     required this.userName,
-    required this.userSpecification,
     this.profilePhoto,
     this.rating,
     this.reviewCount,
@@ -146,14 +144,6 @@ class UserProfileHeaderCard extends StatelessWidget {
                     ],
                   ],
                 ),
-                SizedBox(height: 2.h),
-                Text(
-                  userSpecification == '—' ? '—' : userSpecification.tr(),
-                  style: TextStyle(
-                    color: secondaryText,
-                    fontSize: 17.sp, // +4
-                  ),
-                ),
                 if (experienceLevel != null && experienceLevel!.isNotEmpty) ...[
                   SizedBox(height: 6.h),
                   Container(
@@ -181,33 +171,37 @@ class UserProfileHeaderCard extends StatelessWidget {
                 if (rating != null && rating! > 0) ...[
                   SizedBox(height: 4.h),
                   // Stars row
-                  Row(
-                    children: [
-                      ...List.generate(
-                        fullStars,
-                        (index) =>
-                            Icon(Icons.star, size: 20.sp, color: accentColor),
-                      ),
-                      if (hasHalfStar)
-                        Icon(Icons.star_half, size: 20.sp, color: accentColor),
-                      ...List.generate(
-                        5 - fullStars - (hasHalfStar ? 1 : 0),
-                        (index) => Icon(
-                          Icons.star_border,
-                          size: 20.sp,
-                          color: accentColor,
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ...List.generate(
+                          fullStars,
+                          (index) =>
+                              Icon(Icons.star, size: 20.sp, color: accentColor),
                         ),
-                      ),
-                      SizedBox(width: 4.w),
-                      Text(
-                        ratingValue.toStringAsFixed(1),
-                        style: TextStyle(
-                          color: accentColor,
-                          fontSize: 17.sp,
-                          fontWeight: FontWeight.w600,
+                        if (hasHalfStar)
+                          Icon(Icons.star_half, size: 20.sp, color: accentColor),
+                        ...List.generate(
+                          5 - fullStars - (hasHalfStar ? 1 : 0),
+                          (index) => Icon(
+                            Icons.star_border,
+                            size: 20.sp,
+                            color: accentColor,
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 4.w),
+                        Text(
+                          ratingValue.toStringAsFixed(1),
+                          style: TextStyle(
+                            color: accentColor,
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 2.h),
                   // Reviews text
@@ -248,8 +242,6 @@ class UserProfileHeaderCard extends StatelessWidget {
                               'roomId': room.id,
                               'roomName': targetUser.fullname,
                               'otherUserImage': targetUser.profilePhoto,
-                              'specification':
-                                  targetUser.profile?.specification,
                               'otherUser': targetUser,
                             },
                           );

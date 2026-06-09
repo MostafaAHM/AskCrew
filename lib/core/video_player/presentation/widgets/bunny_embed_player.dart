@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -300,7 +301,7 @@ class _BunnyEmbedPlayerState extends State<BunnyEmbedPlayer> {
           Container(
             color: Colors.black,
             child: const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+              child: AnimatedLoading(color: Colors.white),
             ),
           ),
 

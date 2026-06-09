@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/core/app_config/app_strings.dart';
 import 'package:aflam/core/app_config/app_icons.dart';
 import 'package:aflam/core/app_config/app_urls.dart';
@@ -632,7 +633,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
                     color: Colors.grey.shade200,
-                    child: const Center(child: CircularProgressIndicator()),
+                    child: const Center(child: AnimatedLoading()),
                   ),
                   errorWidget: (context, url, error) => Container(
                     color: Colors.grey.shade200,
@@ -704,7 +705,6 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                 roomId: state.selectedRoom!.id,
                 roomName: widget.item.createdByFullname ?? AppStrings.user.tr(),
                 otherUserImage: null,
-                specification: null,
               ),
             ),
           ),

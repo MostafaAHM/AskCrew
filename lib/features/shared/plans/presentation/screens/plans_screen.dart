@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:aflam/core/app_config/app_strings.dart';
 import 'package:aflam/core/di/service_locator.dart';
@@ -101,7 +102,7 @@ class _PlansScreenState extends State<PlansScreen> {
           child: BlocBuilder<GetAllPlanCubit, GetAllPlanState>(
             builder: (context, state) {
               if (state is GetAllPlanLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: AnimatedLoading());
               } else if (state is GetAllPlanSuccess) {
                 return _buildContent(
                   context,
@@ -529,10 +530,7 @@ class _PlansScreenState extends State<PlansScreen> {
                           ? const SizedBox(
                               height: 20,
                               width: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
+                              child: AnimatedLoading(color: Colors.white),
                             )
                           : Container(
                               height: 48.h,

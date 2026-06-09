@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/core/app_config/app_strings.dart';
 import 'package:aflam/core/di/service_locator.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
@@ -147,8 +148,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                             const Padding(
                               padding: EdgeInsets.symmetric(vertical: 20),
                               child: Center(
-                                child: CircularProgressIndicator(
-                                  color: Color(0xffFE5B00),
+                                child: AnimatedLoading(color: Color(0xffFE5B00),
                                 ),
                               ),
                             ),

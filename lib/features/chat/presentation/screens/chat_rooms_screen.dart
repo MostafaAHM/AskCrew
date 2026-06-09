@@ -15,12 +15,6 @@ import '../../data/model/chat_room_model.dart';
 import '../cubit/chat_cubit.dart';
 import 'chat_screen.dart';
 
-String? _convertToString(dynamic value) {
-  if (value == null) return null;
-  if (value is String) return value;
-  return value.toString();
-}
-
 class ChatRoomsScreen extends StatelessWidget {
   const ChatRoomsScreen({super.key});
 
@@ -230,9 +224,6 @@ class _ChatRoomTile extends StatelessWidget {
                 roomId: room.id,
                 roomName: otherUser.fullname,
                 otherUserImage: otherUser.profilePhoto,
-                specification: _convertToString(
-                  otherUser.profile?.specification,
-                ),
                 otherUser: otherUser,
               ),
             ),

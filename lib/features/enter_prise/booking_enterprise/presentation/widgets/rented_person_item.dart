@@ -230,7 +230,6 @@ class RentedPersonItem extends StatelessWidget {
                 otherUserImage: booking.userPhoto != null
                     ? AppUrls.imageLink(booking.userPhoto!)
                     : null,
-                specification: null,
               ),
             ),
           ),

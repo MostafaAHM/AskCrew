@@ -1,3 +1,4 @@
+import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
 import 'package:aflam/features/enter_prise/work_enterprise/presentation/widgets/workshop/workshop_tab.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -196,18 +197,18 @@ class _WorkEnterpriseBodyWidgetState extends State<WorkEnterpriseBodyWidget>
     return Container(
       height: 52.h,
       decoration: BoxDecoration(
-        color: _lightPill,
+        gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(40.r),
       ),
       padding: EdgeInsets.all(4.w),
       child: TabBar(
         indicator: BoxDecoration(
-          color: _orange,
+          gradient: AppColors.primaryGradient,
           borderRadius: BorderRadius.circular(40.r),
         ),
         indicatorSize: TabBarIndicatorSize.tab,
         labelColor: Colors.white,
-        unselectedLabelColor: Colors.black87,
+        unselectedLabelColor: Colors.white,
         dividerColor: Colors.transparent,
         labelStyle: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
         unselectedLabelStyle: TextStyle(
@@ -269,7 +270,7 @@ class _WorkEnterpriseBodyWidgetState extends State<WorkEnterpriseBodyWidget>
     } else if (isEnterprise && isProducer) {
       // Enterprise Producer: Artwork + Workshop
       views = [
-        ArtworkTab(orange: _orange),
+        ArtworkTab(),
         WorkshopTab(
           key: _workshopTabKey,
           onShowFloatingButtonChanged: (show) {
@@ -294,7 +295,6 @@ class _WorkEnterpriseBodyWidgetState extends State<WorkEnterpriseBodyWidget>
 
   Widget _buildJobsTab() {
     return CommunityJobsTab(
-      orange: _orange,
       lightPill: _lightPill,
       isAddingJob: _isAddingJob,
       isStudent: true,
@@ -363,28 +363,42 @@ class _WorkEnterpriseBodyWidgetState extends State<WorkEnterpriseBodyWidget>
                       child: AnimatedSlideIn(
                         index: 3,
                         controller: _animationController,
-                        child: Material(
-                          color: _orange,
-                          elevation: 5,
-                          borderRadius: borderRadius,
-                          child: InkWell(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: AppColors.primaryGradient,
                             borderRadius: borderRadius,
-                            onTap: () {
-                              if (isProducer && currentIndex == 0) {
-                                context.push(Routes.selectArtworkType);
-                              } else {
-                                _workshopTabKey.currentState?.openAddWorkshop();
-                              }
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 18.w,
-                                vertical: 12.h,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primaryColor.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                                spreadRadius: 0,
                               ),
-                              child: Text(
-                                buttonText,
-                                style: FontStyles.headline16.copyWith(
-                                  color: Colors.white,
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            borderRadius: borderRadius,
+                            child: InkWell(
+                              borderRadius: borderRadius,
+                              onTap: () {
+                                if (isProducer && currentIndex == 0) {
+                                  context.push(Routes.selectArtworkType);
+                                } else {
+                                  _workshopTabKey.currentState
+                                      ?.openAddWorkshop();
+                                }
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 18.w,
+                                  vertical: 12.h,
+                                ),
+                                child: Text(
+                                  buttonText,
+                                  style: FontStyles.headline16.copyWith(
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),

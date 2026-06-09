@@ -1,6 +1,7 @@
 import '../../../../../core/app_config/app_colors.dart';
 import '../../../../../core/app_config/font_styles.dart';
 import '../../../../../core/helpers/messages.dart';
+import '../../../../../core/widgets/animated_loading/animated_loading.dart';
 import '../../../../../core/widgets/fields/custom_text_field.dart';
 import '../../data/model/questions/request/create_question_request_model.dart';
 import '../cubit/questions/cubit/questions_cubit.dart';
@@ -89,8 +90,6 @@ class _AskQuestionBottomSheetState extends State<AskQuestionBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final orange = const Color(0xFFFF7A3C);
-
     return BlocConsumer<QuestionsCubit, QuestionsState>(
       listener: (context, state) {
         if (state is CreateQuestionSuccess) {
@@ -108,187 +107,322 @@ class _AskQuestionBottomSheetState extends State<AskQuestionBottomSheet> {
       builder: (context, state) {
         final bool isLoading = state is CreateQuestionLoading;
 
-        return DraggableScrollableSheet(
-          initialChildSize: 0.65,
-          maxChildSize: 0.85,
-          minChildSize: 0.45,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: BoxDecoration(
-                color: AppColors.lightBGColor,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 20,
+                spreadRadius: 0,
+                offset: Offset(0, 5),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 40.w,
-                        height: 4.h,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade400,
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                      ),
+            ],
+          ),
+          child: DraggableScrollableSheet(
+            initialChildSize: 0.85,
+            maxChildSize: 0.95,
+            minChildSize: 0.5,
+            expand: false,
+            builder: (context, scrollController) {
+              return Column(
+                children: [
+                  // Header with drag indicator and close button
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: 12.h,
+                      bottom: 8.h,
+                      left: 16.w,
+                      right: 16.w,
                     ),
-                    18.verticalSpace,
-                    Text(
-                      'ask_new_question'.tr(),
-                      style: FontStyles.body12W400.copyWith(
-                        color: orange,
-                        fontSize: 22.sp,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    8.verticalSpace,
-                    Text(
-                      'ask_question_description'.tr(),
-                      style: FontStyles.body14W500.copyWith(
-                        fontSize: 16.sp,
-                        color: AppColors.descriptionColor,
-                      ),
-                    ),
-                    22.verticalSpace,
-
-                    // Title
-                    CustomTextField(
-                      controller: _titleController,
-                      label: 'question_title'.tr(),
-                      hint: 'community_question_title_placeholder'.tr(),
-                    ),
-                    if (_titleError != null) ...[
-                      6.verticalSpace,
-                      Text(
-                        _titleError!,
-                        style: TextStyle(color: Colors.red, fontSize: 12.sp),
-                      ),
-                    ],
-                    18.verticalSpace,
-
-                    // Specification
-                    BlocBuilder<QuestionsCubit, QuestionsState>(
-                      buildWhen: (prev, curr) =>
-                          curr is SpecificationsLoading ||
-                          curr is SpecificationsSuccess ||
-                          curr is SpecificationsFailure,
-                      builder: (context, specState) {
-                        return SpecificationDropdown(
-                          value: _specification,
-                          isLoadingSpecs: specState is SpecificationsLoading,
-                          specifications: specState is SpecificationsSuccess
-                              ? specState.specifications
-                              : {},
-                          onChanged: (val) {
-                            setState(() {
-                              _specification = val;
-                              _specError = null;
-                            });
-                          },
-                        );
-                      },
-                    ),
-                    if (_specError != null) ...[
-                      6.verticalSpace,
-                      Text(
-                        _specError!,
-                        style: TextStyle(color: Colors.red, fontSize: 12.sp),
-                      ),
-                    ],
-                    18.verticalSpace,
-
-                    Text(
-                      'enter_your_question'.tr(),
-                      style: FontStyles.body14W700.copyWith(
-                        color: AppColors.lightMainText,
-                      ),
-                    ),
-                    8.verticalSpace,
-                    Container(
-                      height: 120.h,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 14.w,
-                        vertical: 12.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14.r),
-                        border: Border.all(color: AppColors.borderColor),
-                      ),
-                      child: TextField(
-                        controller: _bodyController,
-                        maxLines: null,
-                        style: TextStyle(fontSize: 16.sp),
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                        ),
-                        onChanged: (_) {
-                          if (_bodyError != null) {
-                            setState(() {
-                              _bodyError = null;
-                            });
-                          }
-                        },
-                      ),
-                    ),
-                    if (_bodyError != null) ...[
-                      6.verticalSpace,
-                      Text(
-                        _bodyError!,
-                        style: TextStyle(color: Colors.red, fontSize: 12.sp),
-                      ),
-                    ],
-                    26.verticalSpace,
-
-                    Center(
-                      child: GestureDetector(
-                        onTap: () => _validateAndSubmit(context, isLoading),
-                        child: Container(
-                          width: 260.w,
-                          height: 50.h,
-                          decoration: BoxDecoration(
-                            color: isLoading ? orange.withOpacity(0.6) : orange,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(4.r),
-                              bottomLeft: Radius.circular(26.r),
-                              topRight: Radius.circular(26.r),
-                              bottomRight: Radius.circular(4.r),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 48.w,
+                            height: 5.h,
+                            decoration: BoxDecoration(
+                              color: Color(0xFFE0E0E0),
+                              borderRadius: BorderRadius.circular(10.r),
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.15),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
                           ),
-                          alignment: Alignment.center,
-                          child: isLoading
-                              ? SizedBox(
-                                  width: 22.w,
-                                  height: 22.w,
-                                  child: const CircularProgressIndicator(
-                                    strokeWidth: 2.4,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : Text(
-                                  'Submit your question'.tr(),
-                                  style: FontStyles.headline16.copyWith(
-                                    color: Colors.white,
+                        ),
+                        10.verticalSpace,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'ask_new_question'.tr(),
+                              style: FontStyles.body12W400.copyWith(
+                                color: Colors.black87,
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => Navigator.of(context).pop(),
+                              child: Container(
+                                width: 36.w,
+                                height: 36.w,
+                                decoration: BoxDecoration(
+                                  color: AppColors.lightBGColor,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: Icon(
+                                  Icons.close,
+                                  size: 20.sp,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height: 1,
+                    color: AppColors.lightBGColor,
+                    thickness: 1.5,
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 20.h,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'ask_question_description'.tr(),
+                            style: FontStyles.body14W500.copyWith(
+                              fontSize: 15.sp,
+                              color: Colors.grey.shade600,
+                              height: 1.4,
+                            ),
+                          ),
+                          24.verticalSpace,
+
+                          // Title
+                          Text(
+                            'question_title'.tr(),
+                            style: FontStyles.body14W700.copyWith(
+                              color: Colors.black87,
+                              fontSize: 15.sp,
+                            ),
+                          ),
+                          10.verticalSpace,
+                          CustomTextField(
+                            controller: _titleController,
+                            hint: 'community_question_title_placeholder'.tr(),
+                          ),
+                          if (_titleError != null) ...[
+                            8.verticalSpace,
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                  size: 16.sp,
+                                ),
+                                4.horizontalSpace,
+                                Text(
+                                  _titleError!,
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                        ),
+                              ],
+                            ),
+                          ],
+                          22.verticalSpace,
+
+                          // Specification
+                          Text(
+                            'Specification'.tr(),
+                            style: FontStyles.body14W700.copyWith(
+                              color: Colors.black87,
+                              fontSize: 15.sp,
+                            ),
+                          ),
+                          10.verticalSpace,
+                          BlocBuilder<QuestionsCubit, QuestionsState>(
+                            buildWhen: (prev, curr) =>
+                                curr is SpecificationsLoading ||
+                                curr is SpecificationsSuccess ||
+                                curr is SpecificationsFailure,
+                            builder: (context, specState) {
+                              return SpecificationDropdown(
+                                value: _specification,
+                                isLoadingSpecs:
+                                    specState is SpecificationsLoading,
+                                specifications:
+                                    specState is SpecificationsSuccess
+                                    ? specState.specifications
+                                    : {},
+                                onChanged: (val) {
+                                  setState(() {
+                                    _specification = val;
+                                    _specError = null;
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                          if (_specError != null) ...[
+                            8.verticalSpace,
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                  size: 16.sp,
+                                ),
+                                4.horizontalSpace,
+                                Text(
+                                  _specError!,
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                          22.verticalSpace,
+
+                          // Question body
+                          Text(
+                            'enter_your_question'.tr(),
+                            style: FontStyles.body14W700.copyWith(
+                              color: Colors.black87,
+                              fontSize: 15.sp,
+                            ),
+                          ),
+                          10.verticalSpace,
+                          Container(
+                            height: 150.h,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 14.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Color(0xFFF9F9F9),
+                              borderRadius: BorderRadius.circular(20.r),
+                              border: Border.all(
+                                color: _bodyError != null
+                                    ? Colors.red
+                                    : Color(0xFFE0E0E0),
+                                width: 1.2,
+                              ),
+                            ),
+                            child: TextField(
+                              controller: _bodyController,
+                              maxLines: null,
+                              expands: true,
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                color: Colors.black87,
+                              ),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'community_question_title_placeholder'
+                                    .tr(),
+                                hintStyle: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: Colors.grey.shade500,
+                                ),
+                              ),
+                              onChanged: (_) {
+                                if (_bodyError != null) {
+                                  setState(() {
+                                    _bodyError = null;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                          if (_bodyError != null) ...[
+                            8.verticalSpace,
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                  size: 16.sp,
+                                ),
+                                4.horizontalSpace,
+                                Text(
+                                  _bodyError!,
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                          30.verticalSpace,
+
+                          // Submit button
+                          Center(
+                            child: GestureDetector(
+                              onTap: () =>
+                                  _validateAndSubmit(context, isLoading),
+                              child: Container(
+                                width: double.infinity,
+                                height: 56.h,
+                                decoration: BoxDecoration(
+                                  gradient: AppColors.primaryGradient,
+                                  borderRadius: BorderRadius.circular(30.r),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.primaryColor.withOpacity(
+                                        0.35,
+                                      ),
+                                      blurRadius: 12,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                alignment: Alignment.center,
+                                child: isLoading
+                                    ? SizedBox(
+                                        width: 24.w,
+                                        height: 24.w,
+                                        child: const AnimatedLoading(
+                                          color: Colors.white,
+                                          size: 24,
+                                        ),
+                                      )
+                                    : Text(
+                                        'Submit your question'.tr(),
+                                        style: FontStyles.headline16.copyWith(
+                                          color: Colors.white,
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          ),
+                          20.verticalSpace,
+                        ],
                       ),
                     ),
-                    14.verticalSpace,
-                  ],
-                ),
-              ),
-            );
-          },
+                  ),
+                ],
+              );
+            },
+          ),
         );
       },
     );
@@ -311,82 +445,59 @@ class SpecificationDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Show only the main category keys
     final List<String> categories = specifications.keys.toList();
 
-    return SizedBox(
+    return Container(
       height: 58.h,
+      padding: EdgeInsets.symmetric(horizontal: 18.w),
+      decoration: BoxDecoration(
+        color: Color(0xFFF9F9F9),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(color: Color(0xFFE0E0E0), width: 1.2),
+      ),
       child: Stack(
         alignment: Alignment.centerRight,
         children: [
-          InputDecorator(
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              labelText: 'Specification'.tr(),
-              labelStyle: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
+          DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              isExpanded: true,
+              value: categories.contains(value) ? value : null,
+              dropdownColor: Colors.white,
+              hint: Text(
+                isLoadingSpecs
+                    ? 'loading_specifications'.tr()
+                    : 'select specification for asking'.tr(),
+                style: TextStyle(fontSize: 15.sp, color: Colors.grey.shade500),
               ),
-              floatingLabelStyle:
-                  TextStyle(fontSize: 22.sp, color: Colors.black87),
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 20.w,
-                vertical: 14.h,
+              icon: Icon(
+                Icons.keyboard_arrow_down_outlined,
+                size: 26.sp,
+                color: Colors.black54,
               ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.r),
-                borderSide: BorderSide(color: AppColors.borderColor),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.r),
-                borderSide: BorderSide(color: AppColors.borderColor),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.r),
-                borderSide: BorderSide(color: AppColors.borderColor),
-              ),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                isExpanded: true,
-                value: (categories.contains(value)) ? value : null,
-                dropdownColor: Colors.white,
-                hint: Text(
-                  isLoadingSpecs
-                      ? 'loading_specifications'.tr()
-                      : 'select specification for asking'.tr(),
-                  style: TextStyle(fontSize: 18.sp, color: Colors.grey.shade500),
-                ),
-                icon:
-                    Icon(Icons.expand_more, size: 26.sp, color: Colors.black87),
-                items: categories
-                    .map(
-                      (e) => DropdownMenuItem<String>(
-                        value: e,
-                        child: Text(
-                          e.tr(), // Translate the category key
-                          style:
-                              TextStyle(fontSize: 16.sp, color: Colors.black87),
+              items: categories
+                  .map(
+                    (e) => DropdownMenuItem<String>(
+                      value: e,
+                      child: Text(
+                        e.tr(),
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          color: Colors.black87,
                         ),
                       ),
-                    )
-                    .toList(),
-                onChanged: isLoadingSpecs ? null : onChanged,
-              ),
+                    ),
+                  )
+                  .toList(),
+              onChanged: isLoadingSpecs ? null : onChanged,
             ),
           ),
           if (isLoadingSpecs)
             Positioned(
               right: 40.w,
               child: SizedBox(
-                width: 16.w,
-                height: 16.w,
-                child: const CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Color(0xFFFF7A3C),
-                ),
+                width: 18.w,
+                height: 18.w,
+                child: AnimatedLoading(size: 18, color: AppColors.primaryColor),
               ),
             ),
         ],

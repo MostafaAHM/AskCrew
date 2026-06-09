@@ -25,12 +25,28 @@ class TalentModel {
 
   static String? _specToString(dynamic spec) {
     if (spec == null) return null;
-    if (spec is String) return spec;
-    if (spec is Map) {
+    String? result;
+    if (spec is String) {
+      result = spec;
+    } else if (spec is Map) {
       final values = spec.values.whereType<String>();
-      return values.isNotEmpty ? values.join(', ') : null;
+      result = values.isNotEmpty ? values.join(', ') : null;
+    } else {
+      result = spec.toString();
     }
-    return spec.toString();
+
+    if (result != null) {
+      // Remove any brackets and extra whitespace
+      result = result
+          .replaceAll('[', '')
+          .replaceAll(']', '')
+          .replaceAll('{', '')
+          .replaceAll('}', '')
+          .replaceAll('"', '')
+          .replaceAll("'", '')
+          .trim();
+    }
+    return result;
   }
 
   factory TalentModel.fromJson(Map<String, dynamic> json) {
@@ -59,9 +75,7 @@ class TalentModel {
       id: json['id']?.toString() ?? '',
       name: json['fullname'] ?? '',
       role: role,
-      specialization: specStr ??
-          json['profile']?['experience'] ??
-          '',
+      specialization: specStr ?? json['profile']?['experience'] ?? '',
       imageUrl: imageUrl ?? json['profile_photo'],
       isVerified: json['is_verified'] ?? false,
       waterMark: json['water_mark'] ?? false,
@@ -103,9 +117,7 @@ class TalentModel {
       id: user.id.toString(),
       name: user.fullname,
       role: role,
-      specialization: specStr ??
-          user.profile?.experience ??
-          '',
+      specialization: specStr ?? user.profile?.experience ?? '',
       imageUrl: imageUrl ?? user.profilePhoto,
       isVerified: user.isVerified,
       waterMark: user.waterMark,

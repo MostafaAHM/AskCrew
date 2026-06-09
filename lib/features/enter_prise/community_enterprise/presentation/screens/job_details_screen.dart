@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:aflam/core/app_config/app_urls.dart';
 import 'package:aflam/core/app_config/font_styles.dart';
@@ -277,7 +278,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                         builder: (context, state) {
                           if (state is GetJobApplicationsLoading) {
                             return const Center(
-                              child: CircularProgressIndicator(),
+                              child: AnimatedLoading(),
                             );
                           } else if (state is GetJobApplicationsSuccess) {
                             final applications =
@@ -379,9 +380,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                               backgroundColor: isPending ? Colors.grey : null,
                               widget: isLoading
                                   ? const Center(
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                      ),
+                                      child: AnimatedLoading(color: Colors.white),
                                     )
                                   : null,
                             ),

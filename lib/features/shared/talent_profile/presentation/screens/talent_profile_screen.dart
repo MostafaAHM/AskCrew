@@ -39,22 +39,16 @@ class TalentProfileScreen extends StatelessWidget {
             final profileState = context.read<TalentProfileCubit>().state;
             String roomName = '';
             String? otherUserImage;
-            String? specification;
 
             if (profileState is TalentProfileLoaded) {
               roomName = profileState.profile.name;
               otherUserImage = profileState.profile.imageUrl;
-              specification = profileState.profile.jobTitle;
             }
 
             context.pushNamed(
               Routes.chatMessages,
               pathParameters: {'roomId': state.selectedRoom!.id.toString()},
-              extra: {
-                'roomName': roomName,
-                'otherUserImage': otherUserImage,
-                'specification': specification,
-              },
+              extra: {'roomName': roomName, 'otherUserImage': otherUserImage},
             );
           } else if (state.status == ChatStatus.error) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -106,10 +100,6 @@ class TalentProfileScreen extends StatelessWidget {
                         icon: Icons.location_on_outlined,
                         text: profile.location,
                       ),
-                      InfoRow(
-                        icon: Icons.school_outlined,
-                        text: profile.specialization,
-                      ),
                       32.verticalSpace,
                       // Statistics Section
                       if (profile.views != null && profile.views! > 0 ||
@@ -147,12 +137,11 @@ class TalentProfileScreen extends StatelessWidget {
                           ),
                         32.verticalSpace,
                       ],
-                      // Plan Features Section
-                      if (profile.plan != null &&
-                          profile.plan!['features'] != null &&
-                          (profile.plan!['features'] as List).isNotEmpty) ...[
+
+                      // Specialization Section
+                      if (profile.specialization.isNotEmpty) ...[
                         Text(
-                          'plan_features'.tr(),
+                          'specialization'.tr().isNotEmpty ? 'specialization'.tr() : 'Specialization',
                           style: TextStyle(
                             color: AppColors.secondaryColor,
                             fontSize: 16.sp,
@@ -160,26 +149,12 @@ class TalentProfileScreen extends StatelessWidget {
                           ),
                         ),
                         16.verticalSpace,
-                        ...((profile.plan!['features'] as List).map<Widget>((
-                          feature,
-                        ) {
-                          final featureMap = feature as Map<String, dynamic>;
-                          final featureKey =
-                              featureMap['feature_key_display']?.toString() ??
-                              featureMap['feature_key']?.toString() ??
-                              '';
-                          final limit = featureMap['limit'];
-                          final limitText = limit != null
-                              ? ' ($limit)'
-                              : ' (Unlimited)';
-                          return InfoRow(
-                            icon: Icons.check_circle_outline,
-                            text: '$featureKey$limitText',
-                          );
-                        }).toList()),
+                        InfoRow(
+                          icon: Icons.work_outline,
+                          text: profile.specialization,
+                        ),
                         32.verticalSpace,
                       ],
-                      32.verticalSpace,
                       // Roles Section
                       if (profile.roles != null &&
                           profile.roles!.isNotEmpty) ...[

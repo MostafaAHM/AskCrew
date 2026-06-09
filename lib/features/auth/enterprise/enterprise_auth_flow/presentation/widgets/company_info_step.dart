@@ -1,10 +1,11 @@
 import 'dart:async';
+
 import 'package:aflam/core/app_config/app_strings.dart';
 import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
 import 'package:aflam/core/validations/validators.dart';
 import 'package:aflam/core/widgets/fields/custom_text_field.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -75,22 +76,23 @@ class _CompanyInfoStepState extends State<CompanyInfoStep> {
 
   Future<void> _pickFile() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'pdf', 'png'],
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
       );
 
-      if (result != null) {
+      if (image != null) {
         setState(() {
-          _selectedFileName = result.files.single.name;
+          _selectedFileName = image.name;
         });
 
         context.read<EnterpriseOnboardingCubit>().updateProfilePicture(
-          result.files.single.path!,
+          image.path,
         );
       }
     } catch (e) {
-      debugPrint('Error picking file: $e');
+      debugPrint('Error picking image: $e');
     }
   }
 
@@ -130,8 +132,29 @@ class _CompanyInfoStepState extends State<CompanyInfoStep> {
                   style: TextStyle(fontSize: 14.sp, color: AppColors.greyText),
                 ),
                 32.height,
+                Row(
+                  children: [
+                    Text(
+                      AppStrings.yourCountry.tr(),
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.lightTText,
+                      ),
+                    ),
+                    4.width,
+                    Text(
+                      '*',
+                      style: TextStyle(
+                        color: AppColors.secondaryColor,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                  ],
+                ),
+                8.height,
                 CustomTextField(
-                  label: AppStrings.yourCountry.tr(),
+                  label: '',
                   hint: AppStrings.enterYourCountryName.tr(),
                   controller: _countryController,
                   validator: CustomValidators.validateEmpty,
@@ -142,8 +165,29 @@ class _CompanyInfoStepState extends State<CompanyInfoStep> {
                   },
                 ),
                 20.height,
+                Row(
+                  children: [
+                    Text(
+                      AppStrings.yourCity.tr(),
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.lightTText,
+                      ),
+                    ),
+                    4.width,
+                    Text(
+                      '*',
+                      style: TextStyle(
+                        color: AppColors.secondaryColor,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                  ],
+                ),
+                8.height,
                 CustomTextField(
-                  label: AppStrings.yourCity.tr(),
+                  label: '',
                   hint: AppStrings.enterYourCityName.tr(),
                   controller: _cityController,
                   validator: CustomValidators.validateEmpty,
@@ -153,7 +197,7 @@ class _CompanyInfoStepState extends State<CompanyInfoStep> {
                 ),
                 32.height,
                 Text(
-                  AppStrings.work.tr(),
+                  '${AppStrings.work.tr()} (optional)',
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
@@ -167,13 +211,25 @@ class _CompanyInfoStepState extends State<CompanyInfoStep> {
                 12.height,
                 _buildSelectedWorkItems(),
                 32.height,
-                Text(
-                  'uploadYourProfileImage'.tr(),
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.lightTText,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      'uploadYourProfileImage'.tr(),
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.lightTText,
+                      ),
+                    ),
+                    4.width,
+                    Text(
+                      '*',
+                      style: TextStyle(
+                        color: AppColors.secondaryColor,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                  ],
                 ),
                 16.height,
                 Align(
@@ -220,22 +276,21 @@ class _CompanyInfoStepState extends State<CompanyInfoStep> {
                                     ),
                                     children: [
                                       TextSpan(
-                                        text: AppStrings.choosePhotoOrFile.tr(),
+                                        text: 'choosePhoto'.tr(),
                                         style: TextStyle(
                                           color: AppColors.secondaryColor,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                       TextSpan(
-                                        text: AppStrings.toUploadYourPicture
-                                            .tr(),
+                                        text: 'toUploadYourPicture'.tr(),
                                       ),
                                     ],
                                   ),
                                 ),
                                 8.height,
                                 Text(
-                                  AppStrings.supportedFormatsJpegPdf.tr(),
+                                  'supportedFormatsJpegPng'.tr(),
                                   style: TextStyle(
                                     fontSize: 12.sp,
                                     color: AppColors.greyText,

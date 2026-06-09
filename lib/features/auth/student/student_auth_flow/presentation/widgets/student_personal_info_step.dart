@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
 import 'package:aflam/core/validations/validators.dart';
@@ -6,6 +7,7 @@ import 'package:aflam/core/widgets/fields/custom_text_field.dart';
 import 'package:aflam/features/auth/enterprise/enterprise_auth_flow/presentation/widgets/dashed_border_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -102,19 +104,18 @@ class _StudentPersonalInfoStepState extends State<StudentPersonalInfoStep> {
 
   Future<void> _pickPicture() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'pdf', 'png'],
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
       );
 
-      if (result != null) {
+      if (image != null) {
         setState(() {
-          _selectedPictureFileName = result.files.single.name;
+          _selectedPictureFileName = image.name;
         });
 
-        context.read<StudentOnboardingCubit>().updateProfilePicture(
-          result.files.single.path!,
-        );
+        context.read<StudentOnboardingCubit>().updateProfilePicture(image.path);
       }
     } catch (e) {
       debugPrint('Error picking picture: $e');
@@ -185,16 +186,58 @@ class _StudentPersonalInfoStepState extends State<StudentPersonalInfoStep> {
                     ),
                   ),
                   32.height,
+                  Row(
+                    children: [
+                      Text(
+                        'yourCountry'.tr(),
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.lightTText,
+                        ),
+                      ),
+                      4.width,
+                      Text(
+                        '*',
+                        style: TextStyle(
+                          color: AppColors.secondaryColor,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                  8.height,
                   CustomTextField(
-                    label: 'yourCountry'.tr(),
+                    label: '',
                     hint: 'enterYourCountryName'.tr(),
                     controller: _countryController,
                     validator: CustomValidators.validateEmpty,
                     onChanged: cubit.updateCountry,
                   ),
                   20.height,
+                  Row(
+                    children: [
+                      Text(
+                        'yourCity'.tr(),
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.lightTText,
+                        ),
+                      ),
+                      4.width,
+                      Text(
+                        '*',
+                        style: TextStyle(
+                          color: AppColors.secondaryColor,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                  8.height,
                   CustomTextField(
-                    label: 'yourCity'.tr(),
+                    label: '',
                     hint: 'enterYourCityName'.tr(),
                     controller: _cityController,
                     validator: CustomValidators.validateEmpty,
@@ -202,7 +245,7 @@ class _StudentPersonalInfoStepState extends State<StudentPersonalInfoStep> {
                   ),
                   20.height,
                   Text(
-                    AppStrings.work.tr(),
+                    '${AppStrings.work.tr()} (optional)',
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
@@ -216,13 +259,25 @@ class _StudentPersonalInfoStepState extends State<StudentPersonalInfoStep> {
                   12.height,
                   _buildSelectedWorkItems(),
                   32.height,
-                  Text(
-                    'uploadYourProfileImage'.tr(),
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.lightTText,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        'uploadYourProfileImage'.tr(),
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.lightTText,
+                        ),
+                      ),
+                      4.width,
+                      Text(
+                        '*',
+                        style: TextStyle(
+                          color: AppColors.secondaryColor,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                    ],
                   ),
                   16.height,
                   Align(
@@ -265,7 +320,7 @@ class _StudentPersonalInfoStepState extends State<StudentPersonalInfoStep> {
                                   ),
                                   children: [
                                     TextSpan(
-                                      text: 'choosePhotoOrFile'.tr(),
+                                      text: 'choosePhoto'.tr(),
                                       style: TextStyle(
                                         color: AppColors.secondaryColor,
                                         fontWeight: FontWeight.w600,
@@ -277,7 +332,7 @@ class _StudentPersonalInfoStepState extends State<StudentPersonalInfoStep> {
                               ),
                               8.height,
                               Text(
-                                'supportedFormatsJpegPdf'.tr(),
+                                'supportedFormatsJpegPng'.tr(),
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   color: AppColors.greyText,
@@ -429,6 +484,18 @@ class _StudentPersonalInfoStepState extends State<StudentPersonalInfoStep> {
                     ),
                   ),
                   32.height,
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '${'uploadYourCv'.tr()} (optional)',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.lightTText,
+                      ),
+                    ),
+                  ),
+                  16.height,
                   Align(
                     alignment: Alignment.center,
                     child: ConstrainedBox(
@@ -644,18 +711,44 @@ class _StudentPersonalInfoStepState extends State<StudentPersonalInfoStep> {
                         ),
                       );
                     },
-                    child: CustomTextField(
-                      label: 'personalInfo'.tr(),
-                      hint: 'someInfoAboutYou'.tr(),
-                      controller: _personalInfoController,
-                      maxLines: 5,
-                      minLines: 3,
-                      onChanged: cubit.updatePersonalInfo,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'skills'.tr(),
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.lightTText,
+                              ),
+                            ),
+                            4.width,
+                            Text(
+                              '*',
+                              style: TextStyle(
+                                color: AppColors.secondaryColor,
+                                fontSize: 16.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                        8.height,
+                        CustomTextField(
+                          label: '',
+                          hint: 'describeYourSkills'.tr(),
+                          controller: _personalInfoController,
+                          maxLines: 5,
+                          minLines: 3,
+                          onChanged: cubit.updatePersonalInfo,
+                        ),
+                      ],
                     ),
                   ),
                   24.height,
                   Text(
-                    'shareYourSocialMedia'.tr(),
+                    '${'shareYourSocialMedia'.tr()} (optional)',
                     style: TextStyle(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w700,
@@ -664,7 +757,7 @@ class _StudentPersonalInfoStepState extends State<StudentPersonalInfoStep> {
                   ),
                   16.height,
                   CustomTextField(
-                    label: 'facebook'.tr(),
+                    label: '${'facebook'.tr()} (optional)',
                     hint: 'facebookLink'.tr(),
                     controller: _facebookController,
                     keyboardType: TextInputType.url,
@@ -672,7 +765,7 @@ class _StudentPersonalInfoStepState extends State<StudentPersonalInfoStep> {
                   ),
                   16.height,
                   CustomTextField(
-                    label: 'instagram'.tr(),
+                    label: '${'instagram'.tr()} (optional)',
                     hint: 'instagramLink'.tr(),
                     controller: _instagramController,
                     keyboardType: TextInputType.url,
@@ -680,7 +773,7 @@ class _StudentPersonalInfoStepState extends State<StudentPersonalInfoStep> {
                   ),
                   16.height,
                   CustomTextField(
-                    label: 'linkedin'.tr(),
+                    label: '${'linkedin'.tr()} (optional)',
                     hint: 'linkedinLink'.tr(),
                     controller: _linkedinController,
                     keyboardType: TextInputType.url,
@@ -688,7 +781,7 @@ class _StudentPersonalInfoStepState extends State<StudentPersonalInfoStep> {
                   ),
                   16.height,
                   CustomTextField(
-                    label: 'youtube'.tr(),
+                    label: '${'youtube'.tr()} (optional)',
                     hint: 'youtubeLink'.tr(),
                     controller: _youtubeController,
                     keyboardType: TextInputType.url,
@@ -696,7 +789,7 @@ class _StudentPersonalInfoStepState extends State<StudentPersonalInfoStep> {
                   ),
                   16.height,
                   CustomTextField(
-                    label: 'secondaryEmail'.tr(),
+                    label: '${'secondaryEmail'.tr()} (optional)',
                     hint: 'emailLink'.tr(),
                     controller: _emailAddressController,
                     keyboardType: TextInputType.emailAddress,
@@ -704,7 +797,7 @@ class _StudentPersonalInfoStepState extends State<StudentPersonalInfoStep> {
                   ),
                   32.height,
                   Text(
-                    'portfolioLinks'.tr(),
+                    '${'portfolioLinks'.tr()} (optional)',
                     style: TextStyle(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w700,

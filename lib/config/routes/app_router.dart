@@ -246,7 +246,6 @@ class AppRouter {
                 roomId: roomId,
                 roomName: extra?['roomName'] ?? 'Chat',
                 otherUserImage: extra?['otherUserImage'],
-                specification: extra?['specification'],
                 otherUser: extra?['otherUser'],
               ),
             ),
@@ -1019,7 +1018,6 @@ class AppRouter {
           final roomId = args['roomId'] as int?;
           final roomName = args['roomName'] as String? ?? '';
           final otherUserImage = args['otherUserImage'] as String?;
-          final specification = args['specification'] as String?;
           final otherUser = args['otherUser'] as UserModel?;
 
           if (roomId == null) {
@@ -1049,7 +1047,6 @@ class AppRouter {
                 roomId: roomId,
                 roomName: roomName,
                 otherUserImage: otherUserImage,
-                specification: specification,
                 otherUser: otherUser,
               ),
             ),

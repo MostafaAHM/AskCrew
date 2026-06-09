@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -327,7 +328,7 @@ class _AddEpisodesScreenState extends State<AddEpisodesScreen>
             Container(
               color: Colors.black.withOpacity(0.5),
               child: const Center(
-                child: CircularProgressIndicator(color: Color(0xFFFF6B35)),
+                child: AnimatedLoading(color: Color(0xFFFF6B35)),
               ),
             ),
         ],
@@ -989,9 +990,9 @@ class EpisodeItemWidget extends StatelessWidget {
                 SizedBox(
                   width: 16.sp,
                   height: 16.sp,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+                  child: AnimatedLoading(
+                    color: Colors.orange,
+                    size: 16,
                   ),
                 ),
                 SizedBox(width: 6.w),

@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/core/app_config/app_strings.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
 import 'package:aflam/core/widgets/appbar/logo_skip_appbar.dart';
@@ -106,9 +107,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 return const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 20),
                                   child: Center(
-                                    child: CircularProgressIndicator(
-                                      color: AppColors.secondaryColor,
-                                    ),
+                                    child: AnimatedLoading(color: AppColors.secondaryColor),
                                   ),
                                 );
                               }

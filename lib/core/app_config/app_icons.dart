@@ -2,9 +2,9 @@ class AppIcons {
   static const String _iconBase = "assets/icons";
   static const String _navBar = "assets/icons/nav_bar";
 
-  static const String logo = "$_iconBase/logo.svg";
+  static const String logo = "$_iconBase/logo_animation.gif";
   static const String logoDark = "$_iconBase/logo-dark.svg";
-  static const String logoPNG = "$_iconBase/logo.png";
+  static const String logoPNG = "$_iconBase/logo_animation.gif";
   static const String splash = "$_iconBase/logo_splash.png";
   static const String backgroundPNG = "$_iconBase/splash.jpg";
   static const String logoDarkPNG = "$_iconBase/logo-dark.png";

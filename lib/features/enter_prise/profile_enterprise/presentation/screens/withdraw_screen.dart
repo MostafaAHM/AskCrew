@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:aflam/core/di/service_locator.dart';
 import 'package:aflam/core/helpers/user_helper.dart';
@@ -237,7 +238,7 @@ class _WalletBodyState extends State<_WalletBody> {
                         return const Center(
                           child: Padding(
                             padding: EdgeInsets.all(24),
-                            child: CircularProgressIndicator(),
+                            child: AnimatedLoading(),
                           ),
                         );
                       }
@@ -515,10 +516,7 @@ class _GradientButton extends StatelessWidget {
                 ? SizedBox(
                     width: 22,
                     height: 22,
-                    child: CircularProgressIndicator(
-                      color: AppColors.primaryColor,
-                      strokeWidth: 2.5,
-                    ),
+                    child: AnimatedLoading(color: AppColors.primaryColor),
                   )
                 : Row(
                     mainAxisSize: MainAxisSize.min,

@@ -53,13 +53,25 @@ class _InstituteSelectionStepState extends State<InstituteSelectionStep> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   24.height,
-                  Text(
-                    'selectYourInstituteCollege'.tr(),
-                    style: TextStyle(
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.lightTText,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        'selectYourInstituteCollege'.tr(),
+                        style: TextStyle(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.lightTText,
+                        ),
+                      ),
+                      4.width,
+                      Text(
+                        '*',
+                        style: TextStyle(
+                          color: AppColors.secondaryColor,
+                          fontSize: 24.sp,
+                        ),
+                      ),
+                    ],
                   ),
                   8.height,
                   Text(

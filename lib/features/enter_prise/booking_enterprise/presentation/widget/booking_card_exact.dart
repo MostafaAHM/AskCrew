@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/core/app_config/app_strings.dart';
 import 'package:aflam/core/app_config/app_urls.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
@@ -79,7 +80,7 @@ class BookingCardExact extends StatelessWidget {
                 width: 90.w,
                 height: 80.h,
                 color: Colors.grey.shade200,
-                child: const Center(child: CircularProgressIndicator()),
+                child: const Center(child: AnimatedLoading()),
               ),
               errorWidget: (context, url, error) => Container(
                 width: 90.w,

@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -66,7 +67,7 @@ class WorkshopCard extends StatelessWidget {
                         width: double.infinity,
                         color: Colors.grey.shade200,
                         child: const Center(
-                          child: CircularProgressIndicator.adaptive(),
+                          child: AnimatedLoading(),
                         ),
                       ),
                       errorWidget: (context, url, error) => Container(

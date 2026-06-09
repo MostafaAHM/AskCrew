@@ -139,7 +139,7 @@ class _SocialMediaStepState extends State<SocialMediaStep> {
                 children: [
                   24.height,
                   Text(
-                    'shareYourSocialMedia'.tr(),
+                    '${'shareYourSocialMedia'.tr()} (optional)',
                     style: TextStyle(
                       fontSize: 24.sp,
                       fontWeight: FontWeight.w700,

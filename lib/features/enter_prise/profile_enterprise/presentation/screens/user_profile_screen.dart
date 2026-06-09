@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'dart:ui';
 
 import 'package:aflam/core/app_config/app_colors.dart';
@@ -88,7 +89,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         'roomId': room.id,
                         'roomName': userData.fullname,
                         'otherUserImage': userData.profilePhoto,
-                        'specification': userData.profile?.specification,
                         'otherUser': userData,
                       },
                     );
@@ -106,7 +106,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         'roomId': room.id,
                         'roomName': userData.fullname,
                         'otherUserImage': userData.profilePhoto,
-                        'specification': userData.profile?.specification,
                         'otherUser': userData,
                       },
                     );
@@ -216,7 +215,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.pushReplacementNamed(Routes.yourProfile, extra: userData);
       });
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: AnimatedLoading());
     }
 
     // Show profile content - user can manually click chat button if needed
@@ -238,30 +237,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ? 'common_enterprise'.tr()
         : null;
 
-    bool isSpecNotEmpty(dynamic spec) {
-      if (spec == null) return false;
-      if (spec is String) return spec.trim().isNotEmpty;
-      if (spec is List) return spec.isNotEmpty;
-      if (spec is Map) return spec.isNotEmpty;
-      return true;
-    }
-
-    String? userSpecification = isSpecNotEmpty(profile?.specification)
-        ? (profile!.specification is String
-              ? profile!.specification
-              : UserProfileDataExtractor.extractUserSpecification(
-                  userData,
-                  personalInfoMap,
-                ))
-        : UserProfileDataExtractor.extractUserSpecification(
-            userData,
-            personalInfoMap,
-          ).isNotEmpty
-        ? UserProfileDataExtractor.extractUserSpecification(
-            userData,
-            personalInfoMap,
-          )
-        : baseType;
+    String? userSpecification = baseType;
 
     final experienceLevel = profile?.experienceLevel?.isNotEmpty == true
         ? profile!.experienceLevel
@@ -269,13 +245,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
     if (experienceLevel != null && experienceLevel.isNotEmpty) {
       final level = experienceLevel.tr();
-      if (userSpecification != null &&
-          userSpecification != '—' &&
-          userSpecification != level) {
-        userSpecification = '$level - $userSpecification';
-      } else {
-        userSpecification = level;
-      }
+      userSpecification = level;
     }
 
     final portfolioLinks =
@@ -386,7 +356,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           UserProfileHeaderCard(
             user: userData,
             userName: userName ?? '—',
-            userSpecification: userSpecification ?? '—',
             profilePhoto: profilePhoto,
             rating: rating,
             reviewCount: reviewCount,
@@ -615,7 +584,7 @@ class _WorkItem extends StatelessWidget {
                 placeholder: (context, url) => Container(
                   color: Colors.grey[200],
                   child: const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: AnimatedLoading(),
                   ),
                 ),
                 errorWidget: (context, url, error) => Container(
@@ -749,7 +718,7 @@ class _WorkItem extends StatelessWidget {
                 imageUrl: imageUrl,
                 fit: BoxFit.contain,
                 placeholder: (context, url) => const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
+                  child: AnimatedLoading(color: Colors.white),
                 ),
                 errorWidget: (context, url, error) => const Center(
                   child: Icon(Icons.error, color: Colors.white54, size: 48),

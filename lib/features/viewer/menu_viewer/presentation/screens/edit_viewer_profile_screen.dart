@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:aflam/core/app_config/app_strings.dart';
@@ -123,7 +124,7 @@ class _EditViewerProfileScreenState extends State<EditViewerProfileScreen> {
                     SizedBox(height: 40.h),
 
                     if (isLoading)
-                      const Center(child: CircularProgressIndicator())
+                      const Center(child: AnimatedLoading())
                     else
                       CustomButton(
                         text: 'Save Changes',

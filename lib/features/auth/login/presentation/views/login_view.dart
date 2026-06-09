@@ -2,7 +2,6 @@ import 'package:aflam/config/routes/routes.dart';
 import 'package:aflam/core/di/service_locator.dart';
 import 'package:aflam/core/app_config/app_strings.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
-import 'package:aflam/core/helpers/extensions.dart';
 import 'package:aflam/core/helpers/messages.dart';
 import 'package:aflam/core/validations/validators.dart';
 import 'package:aflam/core/widgets/buttons/custom_button.dart';
@@ -17,6 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:aflam/core/helpers/user_helper.dart';
 
@@ -37,6 +37,19 @@ class _LoginViewState extends State<LoginView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _rememberMe = false;
+  String? _category;
+
+  @override
+  void initState() {
+    super.initState();
+    // Get category from query parameters
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final state = GoRouterState.of(context);
+      setState(() {
+        _category = state.uri.queryParameters['category'];
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -309,7 +322,15 @@ class _LoginViewState extends State<LoginView> {
                                       ),
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () {
-                                          context.go(Routes.signup);
+                                          if (_category == 'enterprise') {
+                                            context.go(
+                                              Routes.registerEnterprise,
+                                            );
+                                          } else if (_category == 'student') {
+                                            context.go(Routes.registerStudent);
+                                          } else {
+                                            context.go(Routes.signup);
+                                          }
                                         },
                                     ),
                                   ],

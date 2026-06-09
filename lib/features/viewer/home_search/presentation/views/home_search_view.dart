@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/core/app_config/app_strings.dart';
 import 'package:aflam/core/di/service_locator.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
@@ -59,7 +60,7 @@ class _HomeSearchViewState extends State<HomeSearchView> {
         body: BlocBuilder<HomeSearchCubit, HomeSearchState>(
           builder: (context, state) {
             if (state is HomeSearchLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: AnimatedLoading());
             } else if (state is HomeSearchError) {
               return Center(child: Text(state.message));
             } else if (state is HomeSearchEmpty) {

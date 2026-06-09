@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/config/routes/routes.dart';
 import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:aflam/core/app_config/app_strings.dart';
@@ -134,7 +135,7 @@ class EnterpriseOnboardingView extends StatelessWidget {
           if (state is EnterpriseOnboardingInitial) {
             return const Scaffold(
               backgroundColor: AppColors.lightBGColor,
-              body: Center(child: CircularProgressIndicator()),
+              body: Center(child: AnimatedLoading()),
             );
           }
 

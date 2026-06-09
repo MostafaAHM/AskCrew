@@ -62,7 +62,6 @@ class HomeStudentBody extends StatelessWidget {
                           builder: (context, user, _) {
                             return ProfileHeaderWidget(
                               name: state.profile.name,
-                              profession: state.profile.profession,
                               profileImage: state.profile.profileImage,
                               isVerified: state.profile.waterMark,
                               rating: state.profile.rating,

@@ -49,16 +49,21 @@ class _AflamAppState extends State<AflamApp> {
               create: (context) => getIt<NotificationsCubit>()..init(),
             ),
           ],
-          child: MaterialApp.router(
-            key: ValueKey(context.locale.languageCode),
-            routerConfig: AppRouter.router,
-            theme: AflamAppTheme.lightTheme,
-            themeMode: ThemeMode.light,
-            debugShowCheckedModeBanner: false,
-            locale: context.locale,
-            supportedLocales: context.supportedLocales,
-            localizationsDelegates: context.localizationDelegates,
-            title: 'Aflam App',
+          child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: MaterialApp.router(
+              key: ValueKey(context.locale.languageCode),
+              routerConfig: AppRouter.router,
+              theme: AflamAppTheme.lightTheme,
+              themeMode: ThemeMode.light,
+              debugShowCheckedModeBanner: false,
+              locale: context.locale,
+              supportedLocales: context.supportedLocales,
+              localizationsDelegates: context.localizationDelegates,
+              title: 'Aflam App',
+            ),
           ),
         );
       },

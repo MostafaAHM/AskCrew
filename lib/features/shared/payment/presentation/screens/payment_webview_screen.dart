@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -149,7 +150,7 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
             Container(
               color: Colors.white,
               child: const Center(
-                child: CircularProgressIndicator(color: Color(0xFFFF6B35)),
+                child: AnimatedLoading(color: Color(0xFFFF6B35)),
               ),
             ),
         ],

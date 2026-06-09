@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -31,16 +32,17 @@ class UploadMovieScreen extends StatefulWidget {
   State<UploadMovieScreen> createState() => _UploadMovieScreenState();
 }
 
-class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTickerProviderStateMixin {
+class _UploadMovieScreenState extends State<UploadMovieScreen>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _movieNameController = TextEditingController();
-  
+
   late AnimationController _animationController;
 
   File? _movieFile;
   File? _trailerFile;
   int? _selectedCategoryId;
-  
+
   String? _uploadedVideoId;
   String? _uploadedTrailerId;
   bool _isUploadingMovie = false;
@@ -64,40 +66,44 @@ class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTicker
       _uploadedVideoId = widget.movieToUpdate!.video;
       _uploadedTrailerId = widget.movieToUpdate!.trailer;
       _isVideoReady = widget.movieToUpdate!.isReady;
-      
+
       // Start status check if video is not ready
-      if (!_isVideoReady && _uploadedVideoId != null && _uploadedVideoId!.isNotEmpty) {
+      if (!_isVideoReady &&
+          _uploadedVideoId != null &&
+          _uploadedVideoId!.isNotEmpty) {
         _startStatusCheck();
       }
     }
   }
-  
+
   void _startStatusCheck() {
     _statusCheckTimer?.cancel();
-    _statusCheckTimer = Timer.periodic(const Duration(seconds: 10), (timer) async {
+    _statusCheckTimer = Timer.periodic(const Duration(seconds: 10), (
+      timer,
+    ) async {
       if (!mounted || _isVideoReady) {
         timer.cancel();
         return;
       }
-      
+
       if (_isCheckingStatus || widget.movieToUpdate == null) return;
       _isCheckingStatus = true;
-      
+
       try {
         final moviesCubit = getIt<GetMoviesCubit>();
         await moviesCubit.getMovies(refresh: true);
-        
+
         if (mounted && moviesCubit.state is GetMoviesLoaded) {
           final movies = (moviesCubit.state as GetMoviesLoaded).movies;
           final movieId = widget.movieToUpdate!.id;
           final currentMovie = movies.where((m) => m.id == movieId).firstOrNull;
-          
+
           if (currentMovie != null && currentMovie.isReady != _isVideoReady) {
             if (mounted) {
               setState(() {
                 _isVideoReady = currentMovie.isReady;
               });
-              
+
               if (_isVideoReady) {
                 timer.cancel();
                 if (mounted) {
@@ -133,271 +139,280 @@ class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTicker
     return BlocProvider(
       create: (context) => getIt<CategoriesCubit>()..fetchCategories(),
       child: Scaffold(
-        backgroundColor: const Color(0xFFFDFDFD), 
-        appBar: CustomAppBar.backAppBar(
-          showLogoInBackAppBar: true,
-        ),
+        backgroundColor: const Color(0xFFFDFDFD),
+        appBar: CustomAppBar.backAppBar(showLogoInBackAppBar: true),
         body: BlocListener<VideoUploadCubit, VideoUploadState>(
-        listener: (context, state) {
-          if (state is VideoUploadSuccess) {
-            setState(() {
-              if (_isUploadingMovie) {
-                _uploadedVideoId = state.videoId;
+          listener: (context, state) {
+            if (state is VideoUploadSuccess) {
+              setState(() {
+                if (_isUploadingMovie) {
+                  _uploadedVideoId = state.videoId;
+                  _isUploadingMovie = false;
+                } else if (_isUploadingTrailer) {
+                  _uploadedTrailerId = state.videoId;
+                  _isUploadingTrailer = false;
+                }
+              });
+            } else if (state is VideoUploadError) {
+              setState(() {
                 _isUploadingMovie = false;
-              } else if (_isUploadingTrailer) {
-                _uploadedTrailerId = state.videoId;
                 _isUploadingTrailer = false;
-              }
-            });
-          } else if (state is VideoUploadError) {
-            setState(() {
-              _isUploadingMovie = false;
-              _isUploadingTrailer = false;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('❌ Error: ${state.message}'), backgroundColor: Colors.red),
-            );
-          } else if (state is VideoUploadInitial) {
-             setState(() {
-              _isUploadingMovie = false;
-              _isUploadingTrailer = false;
-            });
-          }
-        },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.only(
-            left: 20.w,
-            right: 20.w,
-            top: 10.h,
-            bottom: 100.h,
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AnimatedSlideIn(
-                  index: 0,
-                  controller: _animationController,
-                  child: _buildProgressIndicator(currentStep: 2, totalSteps: 3),
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('❌ Error: ${state.message}'),
+                  backgroundColor: Colors.red,
                 ),
-                
-                SizedBox(height: 30.h),
-                
-                AnimatedSlideIn(
-                  index: 1,
-                  controller: _animationController,
-                  child: _buildFloatingLabelInput(
-                    controller: _movieNameController,
-                    label: AppStrings.movieName.tr(),
-                    hint: AppStrings.enterYourMovieName.tr(),
-                  ),
-                ),
-                
-                SizedBox(height: 30.h),
-                
-                AnimatedSlideIn(
-                  index: 2,
-                  controller: _animationController,
-                  child: Text(
-                    AppStrings.uploadYourMovie.tr(),
-                    style: TextStyle(
-                      fontSize: 25.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+              );
+            } else if (state is VideoUploadInitial) {
+              setState(() {
+                _isUploadingMovie = false;
+                _isUploadingTrailer = false;
+              });
+            }
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.only(
+              left: 20.w,
+              right: 20.w,
+              top: 10.h,
+              bottom: 100.h,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AnimatedSlideIn(
+                    index: 0,
+                    controller: _animationController,
+                    child: _buildProgressIndicator(
+                      currentStep: 2,
+                      totalSteps: 3,
                     ),
                   ),
-                ),
-                SizedBox(height: 8.h),
-                AnimatedSlideIn(
-                  index: 3,
-                  controller: _animationController,
-                  child: Text(
-                    AppStrings.chooseMovieProject.tr(),
-                    style: TextStyle(
-                      fontSize: 21.sp,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ),
-                
-                SizedBox(height: 16.h),
-                
-                AnimatedSlideIn(
-                  index: 4,
-                  controller: _animationController,
-                  child: _buildUploadSection(
-                    titlePart1: AppStrings.chooseVideoOrFile.tr(),
-                    titlePart2: AppStrings.toUploadYourMovie.tr(),
-                    subtitle: AppStrings.supportedFormatsMp4Pdf.tr(),
-                    file: _movieFile,
-                    isUploading: _isUploadingMovie,
-                    uploadedId: _uploadedVideoId,
-                    isVideo: true,
-                    onTap: _pickMovieFile,
-                    onRemove: () {
-                      setState(() {
-                        _movieFile = null;
-                        _uploadedVideoId = null;
-                        _isUploadingMovie = false;
-                        _isVideoReady = true;
-                      });
-                      context.read<VideoUploadCubit>().reset();
-                    },
-                  ),
-                ),
-                
-                SizedBox(height: 30.h),
-                
-                AnimatedSlideIn(
-                  index: 5,
-                  controller: _animationController,
-                  child: Text(
-                    AppStrings.uploadMovieTrailer.tr(),
-                    style: TextStyle(
-                      fontSize: 25.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                AnimatedSlideIn(
-                  index: 6,
-                  controller: _animationController,
-                  child: Text(
-                    AppStrings.chooseMovieTrailer.tr(),
-                    style: TextStyle(
-                      fontSize: 21.sp,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ),
-                
-                SizedBox(height: 16.h),
-                
-                AnimatedSlideIn(
-                  index: 7,
-                  controller: _animationController,
-                  child: _buildUploadSection(
-                    titlePart1: AppStrings.chooseVideoOrFile.tr(),
-                    titlePart2: AppStrings.toUploadTheTrailer.tr(),
-                    subtitle: AppStrings.supportedFormatsJpegPdf.tr(),
-                    file: _trailerFile,
-                    isUploading: _isUploadingTrailer,
-                    uploadedId: _uploadedTrailerId,
-                    isVideo: false,
-                    onTap: _pickTrailerFile,
-                    onRemove: () {
-                      setState(() {
-                        _trailerFile = null;
-                        _uploadedTrailerId = null;
-                        _isUploadingTrailer = false;
-                      });
-                      context.read<VideoUploadCubit>().reset();
-                    },
-                  ),
-                ),
-                
-                SizedBox(height: 30.h),
-                
-                AnimatedSlideIn(
-                  index: 8,
-                  controller: _animationController,
-                  child: BlocBuilder<CategoriesCubit, CategoriesState>(
-                    builder: (context, state) {
-                      if (state is CategoriesLoading) {
-                        return Shimmer.fromColors(
-                          baseColor: Colors.grey.shade300,
-                          highlightColor: Colors.grey.shade100,
-                          child: Container(
-                            height: 60.h,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(30.r),
-                            ),
-                          ),
-                        );
-                      }
-                      
-                      List<DropdownMenuItem<int>> items = [];
-                      if (state is CategoriesLoaded) {
-                        items = state.categories.map((category) {
-                          return DropdownMenuItem<int>(
-                            value: category.id,
-                            child: Text(category.name),
-                          );
-                        }).toList();
-                      } else if (state is CategoriesError) {
-                        items = [
-                          DropdownMenuItem(value: null, child: Text(AppStrings.errorLoadingCategories.tr())),
-                        ];
-                      }
 
-                      return _buildFloatingLabelDropdown(
-                        label: AppStrings.movieCategory.tr(),
-                        hint: AppStrings.selectYourMovieCategory.tr(),
-                        value: _selectedCategoryId,
-                        items: items,
-                        onChanged: (int? value) {
-                          setState(() {
-                            _selectedCategoryId = value;
-                          });
-                        },
-                      );
-                    },
+                  SizedBox(height: 30.h),
+
+                  AnimatedSlideIn(
+                    index: 1,
+                    controller: _animationController,
+                    child: _buildFloatingLabelInput(
+                      controller: _movieNameController,
+                      label: AppStrings.movieName.tr(),
+                      hint: AppStrings.enterYourMovieName.tr(),
+                    ),
                   ),
-                ),
-                
-                SizedBox(height: 40.h),
-                
-               AnimatedSlideIn(
-                 index: 9,
-                 controller: _animationController,
-                 child: Container(
-                   width: double.infinity,
-                   height: 56.h,
-                   decoration: BoxDecoration(
-                     gradient: const LinearGradient(
-                       colors: [
-                         AppColors.primaryColor, 
-                         AppColors.secondaryColor, 
-                       ],
-                       begin: Alignment.centerLeft,
-                       end: Alignment.centerRight,
-                     ),
-                     borderRadius: BorderRadius.circular(12.r),
-                   ),
-                   child: ElevatedButton(
-                     onPressed: _canProceed() ? _onNext : null,
-                     style: ElevatedButton.styleFrom(
-                       backgroundColor: Colors.transparent,
-                       shadowColor: Colors.transparent,
-                       shape: RoundedRectangleBorder(
-                         borderRadius: BorderRadius.circular(12.r),
-                       ),
-                     ),
-                     child: Text(
-                       AppStrings.next.tr(),
-                       style: TextStyle(
-                         fontSize: 18.sp,
-                         fontWeight: FontWeight.w600,
-                         color: Colors.white,
-                       ),
-                     ),
-                   ),
-                 ),
-               ),
-                
-                SizedBox(height: 20.h),
-              ],
+
+                  SizedBox(height: 30.h),
+
+                  AnimatedSlideIn(
+                    index: 2,
+                    controller: _animationController,
+                    child: Text(
+                      AppStrings.uploadYourMovie.tr(),
+                      style: TextStyle(
+                        fontSize: 25.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  AnimatedSlideIn(
+                    index: 3,
+                    controller: _animationController,
+                    child: Text(
+                      AppStrings.chooseMovieProject.tr(),
+                      style: TextStyle(
+                        fontSize: 21.sp,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 16.h),
+
+                  AnimatedSlideIn(
+                    index: 4,
+                    controller: _animationController,
+                    child: _buildUploadSection(
+                      titlePart1: AppStrings.chooseVideoOrFile.tr(),
+                      titlePart2: AppStrings.toUploadYourMovie.tr(),
+                      subtitle: AppStrings.supportedFormatsMp4Pdf.tr(),
+                      file: _movieFile,
+                      isUploading: _isUploadingMovie,
+                      uploadedId: _uploadedVideoId,
+                      isVideo: true,
+                      onTap: _pickMovieFile,
+                      onRemove: () {
+                        setState(() {
+                          _movieFile = null;
+                          _uploadedVideoId = null;
+                          _isUploadingMovie = false;
+                          _isVideoReady = true;
+                        });
+                        context.read<VideoUploadCubit>().reset();
+                      },
+                    ),
+                  ),
+
+                  SizedBox(height: 30.h),
+
+                  AnimatedSlideIn(
+                    index: 5,
+                    controller: _animationController,
+                    child: Text(
+                      AppStrings.uploadMovieTrailer.tr(),
+                      style: TextStyle(
+                        fontSize: 25.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  AnimatedSlideIn(
+                    index: 6,
+                    controller: _animationController,
+                    child: Text(
+                      AppStrings.chooseMovieTrailer.tr(),
+                      style: TextStyle(
+                        fontSize: 21.sp,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 16.h),
+
+                  AnimatedSlideIn(
+                    index: 7,
+                    controller: _animationController,
+                    child: _buildUploadSection(
+                      titlePart1: AppStrings.chooseVideoOrFile.tr(),
+                      titlePart2: AppStrings.toUploadTheTrailer.tr(),
+                      subtitle: AppStrings.supportedFormatsJpegPdf.tr(),
+                      file: _trailerFile,
+                      isUploading: _isUploadingTrailer,
+                      uploadedId: _uploadedTrailerId,
+                      isVideo: false,
+                      onTap: _pickTrailerFile,
+                      onRemove: () {
+                        setState(() {
+                          _trailerFile = null;
+                          _uploadedTrailerId = null;
+                          _isUploadingTrailer = false;
+                        });
+                        context.read<VideoUploadCubit>().reset();
+                      },
+                    ),
+                  ),
+
+                  SizedBox(height: 30.h),
+
+                  AnimatedSlideIn(
+                    index: 8,
+                    controller: _animationController,
+                    child: BlocBuilder<CategoriesCubit, CategoriesState>(
+                      builder: (context, state) {
+                        if (state is CategoriesLoading) {
+                          return Shimmer.fromColors(
+                            baseColor: Colors.grey.shade300,
+                            highlightColor: Colors.grey.shade100,
+                            child: Container(
+                              height: 60.h,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(30.r),
+                              ),
+                            ),
+                          );
+                        }
+
+                        List<DropdownMenuItem<int>> items = [];
+                        if (state is CategoriesLoaded) {
+                          items = state.categories.map((category) {
+                            return DropdownMenuItem<int>(
+                              value: category.id,
+                              child: Text(category.name),
+                            );
+                          }).toList();
+                        } else if (state is CategoriesError) {
+                          items = [
+                            DropdownMenuItem(
+                              value: null,
+                              child: Text(
+                                AppStrings.errorLoadingCategories.tr(),
+                              ),
+                            ),
+                          ];
+                        }
+
+                        return _buildFloatingLabelDropdown(
+                          label: AppStrings.movieCategory.tr(),
+                          hint: AppStrings.selectYourMovieCategory.tr(),
+                          value: _selectedCategoryId,
+                          items: items,
+                          onChanged: (int? value) {
+                            setState(() {
+                              _selectedCategoryId = value;
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ),
+
+                  SizedBox(height: 40.h),
+
+                  AnimatedSlideIn(
+                    index: 9,
+                    controller: _animationController,
+                    child: Container(
+                      width: double.infinity,
+                      height: 56.h,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            AppColors.primaryColor,
+                            AppColors.secondaryColor,
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: ElevatedButton(
+                        onPressed: _canProceed() ? _onNext : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        child: Text(
+                          AppStrings.next.tr(),
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 20.h),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
     );
   }
 
@@ -418,8 +433,10 @@ class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTicker
 
     if (uploadedId != null && uploadedId.isNotEmpty) {
       // Check if this is the video (not trailer) and if it's ready
-      final isReady = isVideo ? _isVideoReady : true; // Trailers are always ready
-      
+      final isReady = isVideo
+          ? _isVideoReady
+          : true; // Trailers are always ready
+
       return Container(
         width: double.infinity,
         padding: EdgeInsets.all(16.w),
@@ -438,7 +455,9 @@ class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTicker
                 color: Colors.white,
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isReady ? Colors.green.shade100 : Colors.orange.shade100,
+                  color: isReady
+                      ? Colors.green.shade100
+                      : Colors.orange.shade100,
                 ),
               ),
               child: isReady
@@ -446,9 +465,9 @@ class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTicker
                   : SizedBox(
                       width: 20.sp,
                       height: 20.sp,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+                      child: AnimatedLoading(
+                        color: Colors.orange,
+                        size: 20,
                       ),
                     ),
             ),
@@ -464,19 +483,23 @@ class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTicker
                     style: TextStyle(
                       fontSize: 19.sp,
                       fontWeight: FontWeight.w600,
-                      color: isReady ? Colors.green.shade800 : Colors.orange.shade800,
+                      color: isReady
+                          ? Colors.green.shade800
+                          : Colors.orange.shade800,
                     ),
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    file != null 
-                        ? file.path.split('/').last 
+                    file != null
+                        ? file.path.split('/').last
                         : (uploadedId.isNotEmpty
-                            ? 'Video Already Uploaded (ID: ${uploadedId.length > 20 ? '${uploadedId.substring(0, 20)}...' : uploadedId})'
-                            : 'Existing File'),
+                              ? 'Video Already Uploaded (ID: ${uploadedId.length > 20 ? '${uploadedId.substring(0, 20)}...' : uploadedId})'
+                              : 'Existing File'),
                     style: TextStyle(
                       fontSize: 17.sp,
-                      color: isReady ? Colors.green.shade600 : Colors.orange.shade600,
+                      color: isReady
+                          ? Colors.green.shade600
+                          : Colors.orange.shade600,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -519,7 +542,10 @@ class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTicker
     );
   }
 
-  Widget _buildProgressIndicator({required int currentStep, required int totalSteps}) {
+  Widget _buildProgressIndicator({
+    required int currentStep,
+    required int totalSteps,
+  }) {
     return Row(
       children: List.generate(
         totalSteps,
@@ -552,8 +578,14 @@ class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTicker
             controller: controller,
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 19.sp),
-              contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
+              hintStyle: TextStyle(
+                color: Colors.grey.shade400,
+                fontSize: 19.sp,
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 20.w,
+                vertical: 18.h,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30.r),
                 borderSide: BorderSide(color: Colors.grey.shade300),
@@ -614,8 +646,14 @@ class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTicker
             dropdownColor: Colors.white,
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 19.sp),
-              contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
+              hintStyle: TextStyle(
+                color: Colors.grey.shade400,
+                fontSize: 19.sp,
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 20.w,
+                vertical: 18.h,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30.r),
                 borderSide: BorderSide(color: Colors.grey.shade300),
@@ -701,10 +739,7 @@ class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTicker
               SizedBox(height: 8.h),
               Text(
                 subtitle,
-                style: TextStyle(
-                  fontSize: 17.sp,
-                  color: Colors.grey.shade400,
-                ),
+                style: TextStyle(fontSize: 17.sp, color: Colors.grey.shade400),
               ),
               SizedBox(height: 16.h),
               Container(
@@ -736,9 +771,8 @@ class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTicker
       setState(() {
         _movieFile = File(result.files.single.path!);
         _isUploadingMovie = true;
-
       });
-      
+
       if (!mounted) return;
       context.read<VideoUploadCubit>().uploadVideo(videoFile: _movieFile!);
     }
@@ -754,9 +788,8 @@ class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTicker
       setState(() {
         _trailerFile = File(result.files.single.path!);
         _isUploadingTrailer = true;
-
       });
-      
+
       if (!mounted) return;
       context.read<VideoUploadCubit>().uploadVideo(videoFile: _trailerFile!);
     }
@@ -764,16 +797,16 @@ class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTicker
 
   bool _canProceed() {
     return _movieNameController.text.isNotEmpty &&
-           _uploadedVideoId != null &&
-           _selectedCategoryId != null &&
-           !_isUploadingMovie &&
-           !_isUploadingTrailer;
+        _uploadedVideoId != null &&
+        _selectedCategoryId != null &&
+        !_isUploadingMovie &&
+        !_isUploadingTrailer;
   }
 
   void _onNext() async {
     if (!_formKey.currentState!.validate()) return;
     if (!_canProceed()) return;
-    
+
     final result = await context.pushNamed(
       Routes.addActorsPriceScreen,
       extra: {
@@ -784,7 +817,7 @@ class _UploadMovieScreenState extends State<UploadMovieScreen> with SingleTicker
         'movieToUpdate': widget.movieToUpdate,
       },
     );
-    
+
     if (result == true && mounted) {
       context.pop(true);
     }

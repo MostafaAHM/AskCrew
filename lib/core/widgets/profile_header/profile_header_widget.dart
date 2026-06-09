@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
 import 'package:aflam/core/widgets/cached_network_image/custom_cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,6 @@ import '../../app_config/app_urls.dart';
 
 class ProfileHeaderWidget extends StatelessWidget {
   final String name;
-  final String profession;
   final String profileImage;
   final bool isVerified;
   final double rating;
@@ -21,7 +21,6 @@ class ProfileHeaderWidget extends StatelessWidget {
   const ProfileHeaderWidget({
     super.key,
     required this.name,
-    required this.profession,
     required this.profileImage,
     this.isVerified = false,
     this.rating = 0.0,
@@ -73,23 +72,9 @@ class ProfileHeaderWidget extends StatelessWidget {
 
               6.height,
 
-              /// Actor + stars + rating
+              /// Stars + rating
               Row(
                 children: [
-                  Flexible(
-                    child: Text(
-                      profession,
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.greyText,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  10.width,
-
                   ...List.generate(5, (index) {
                     final filled = index < rating.floor();
                     return Icon(

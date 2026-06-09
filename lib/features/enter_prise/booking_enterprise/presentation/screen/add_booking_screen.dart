@@ -280,7 +280,7 @@ class _AddBookingScreenState extends State<AddBookingScreen>
                           ),
                         ),
                         value: _isActive,
-                        activeThumbColor: _orange,
+                        activeThumbColor: AppColors.primaryColor,
                         onChanged: (val) {
                           setState(() {
                             _isActive = val;
@@ -358,7 +358,9 @@ class _AddBookingScreenState extends State<AddBookingScreen>
           InkWell(
             onTap: _pickPicture,
             child: DashedBorderContainer(
-              borderColor: hasPicture ? _orange : Colors.grey.shade300,
+              borderColor: hasPicture
+                  ? AppColors.primaryColor
+                  : Colors.grey.shade300,
               borderWidth: 1.5,
               borderRadius: 12.r,
               backgroundColor: Colors.white,
@@ -416,14 +418,14 @@ class _AddBookingScreenState extends State<AddBookingScreen>
                             text: AppStrings.choosePhotoOrFileToUploadPicture
                                 .tr(),
                             style: TextStyle(
-                              color: _orange,
+                              color: AppColors.primaryColor,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           TextSpan(
                             text: '*',
                             style: TextStyle(
-                              color: _orange,
+                              color: AppColors.primaryColor,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -445,12 +447,12 @@ class _AddBookingScreenState extends State<AddBookingScreen>
                       height: 56.h,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _orange.withOpacity(0.1),
+                        color: AppColors.primaryColor.withOpacity(0.1),
                       ),
                       child: Icon(
                         Icons.arrow_upward,
                         size: 28.w,
-                        color: _orange,
+                        color: AppColors.primaryColor,
                       ),
                     ),
                   ],

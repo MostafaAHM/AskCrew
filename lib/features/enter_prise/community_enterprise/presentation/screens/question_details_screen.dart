@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/config/routes/routes.dart';
 import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:aflam/core/app_config/app_icons.dart';
@@ -69,8 +70,6 @@ class _QuestionDetailsSectionState extends State<QuestionDetailsSection> {
 
   @override
   Widget build(BuildContext context) {
-    final orange = const Color(0xFFFF7A3C);
-
     return BlocListener<QuestionsCubit, QuestionsState>(
       listener: (context, state) {
         if (state is AnswersSuccess) {
@@ -212,7 +211,6 @@ class _QuestionDetailsSectionState extends State<QuestionDetailsSection> {
                 child: Column(
                   children: [
                     _ReplyInputBar(
-                      orange: orange,
                       controller: _replyController,
                       isSending: isSending,
                       isEditing: _editingAnswerId != null,
@@ -268,62 +266,92 @@ class _QuestionHeaderCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F0FF),
-        borderRadius: BorderRadius.circular(10.r),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+            spreadRadius: 0,
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
             child: Row(
               children: [
-                GestureDetector(
-                  onTap: () {
-                    final userModel = UserModelHelper.createFromPartialData(
-                      id: question.author,
-                      fullname: question.authorName,
-                      email: null,
-                      profilePhoto:
-                          'https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=200',
-                      specification: question.authorSpecification,
-                    );
-                    context.pushNamed(Routes.userProfile, extra: userModel);
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(6.r),
-                    child: Image.network(
-                      'https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=200',
-                      width: 50.w,
-                      height: 50.w,
-                      fit: BoxFit.cover,
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryColor.withOpacity(0.15),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      final userModel = UserModelHelper.createFromPartialData(
+                        id: question.author,
+                        fullname: question.authorName,
+                        email: null,
+                        profilePhoto:
+                            'https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=200',
+                        specification: question.authorSpecification,
+                      );
+                      context.pushNamed(Routes.userProfile, extra: userModel);
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.r),
+                      child: Image.network(
+                        'https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=200',
+                        width: 50.w,
+                        height: 50.w,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          width: 50.w,
+                          height: 50.w,
+                          decoration: BoxDecoration(
+                            gradient: AppColors.primaryGradient,
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: 24.sp,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                8.horizontalSpace,
+                10.horizontalSpace,
                 Expanded(
                   child: Text(
                     question.authorName,
                     style: FontStyles.body14W700.copyWith(
-                      fontSize: 18.sp,
-                      color: const Color(0xFF3A3A3A),
+                      fontSize: 16.sp,
+                      color: const Color(0xFF2D2D2D),
                     ),
                   ),
                 ),
                 if (canManage) ...[
-                  8.horizontalSpace,
                   Container(
-                    width: 32.w,
-                    height: 32.w,
+                    width: 34.w,
+                    height: 34.w,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF5F0),
-                      borderRadius: BorderRadius.circular(8.r),
+                      gradient: AppColors.primaryGradient,
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
                     child: IconButton(
                       padding: EdgeInsets.zero,
                       iconSize: 18.sp,
                       onPressed: () {
-                        // Open edit sheet
                         final questionsCubit = context.read<QuestionsCubit>();
                         showModalBottomSheet(
                           context: context,
@@ -342,23 +370,22 @@ class _QuestionHeaderCard extends StatelessWidget {
                       },
                       icon: const Icon(
                         Icons.edit_outlined,
-                        color: Color(0xFFFF7A3C),
+                        color: Colors.white,
                       ),
                     ),
                   ),
                   8.horizontalSpace,
                   Container(
-                    width: 32.w,
-                    height: 32.w,
+                    width: 34.w,
+                    height: 34.w,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF0F0),
-                      borderRadius: BorderRadius.circular(8.r),
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
                     child: IconButton(
                       padding: EdgeInsets.zero,
                       iconSize: 18.sp,
                       onPressed: () {
-                        // Delete question
                         context.read<QuestionsCubit>().deleteQuestion(
                           questionId: question.id,
                         );
@@ -371,31 +398,46 @@ class _QuestionHeaderCard extends StatelessWidget {
                   ),
                 ],
                 8.horizontalSpace,
-                SvgImageWidget(
-                  image: AppIcons.commentMessage,
-                  width: 18.w,
-                  height: 18.h,
-                ),
-                4.horizontalSpace,
-                Text(
-                  repliesCount.toString(),
-                  style: FontStyles.body12W400.copyWith(
-                    fontSize: 13.sp,
-                    color: const Color(0xFF8C8C8C),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 6.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(16.r),
+                  ),
+                  child: Row(
+                    children: [
+                      SvgImageWidget(
+                        image: AppIcons.commentMessage,
+                        width: 16.w,
+                        height: 16.h,
+                        // color: AppColors.primaryColor,
+                      ),
+                      4.horizontalSpace,
+                      Text(
+                        repliesCount.toString(),
+                        style: FontStyles.body12W400.copyWith(
+                          fontSize: 14.sp,
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-          const Divider(height: 1, thickness: 0.8, color: Color(0xFFE0D9F5)),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
             child: Text(
               question.body,
               style: FontStyles.body14W500.copyWith(
-                fontSize: 17.sp,
-                color: const Color(0xFF727272),
-                height: 1.4,
+                fontSize: 15.sp,
+                color: const Color(0xFF616161),
+                height: 1.5,
               ),
             ),
           ),
@@ -426,14 +468,14 @@ class _ReplyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.lightBGColor,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFFE8E5DE)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.03),
-            blurRadius: 6,
+            blurRadius: 10,
             offset: const Offset(0, 3),
+            spreadRadius: 0,
           ),
         ],
       ),
@@ -441,57 +483,80 @@ class _ReplyCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
             child: Row(
               children: [
-                GestureDetector(
-                  onTap: () {
-                    final userModel = UserModelHelper.createFromPartialData(
-                      id: authorId,
-                      fullname: name,
-                      email: null,
-                      profilePhoto:
-                          'https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=200',
-                      specification: null,
-                    );
-                    context.pushNamed(Routes.userProfile, extra: userModel);
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(6.r),
-                    child: Image.network(
-                      'https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=200',
-                      width: 50.w,
-                      height: 50.w,
-                      fit: BoxFit.cover,
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryColor.withOpacity(0.15),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      final userModel = UserModelHelper.createFromPartialData(
+                        id: authorId,
+                        fullname: name,
+                        email: null,
+                        profilePhoto:
+                            'https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=200',
+                        specification: null,
+                      );
+                      context.pushNamed(Routes.userProfile, extra: userModel);
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.r),
+                      child: Image.network(
+                        'https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=200',
+                        width: 44.w,
+                        height: 44.w,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          width: 44.w,
+                          height: 44.w,
+                          decoration: BoxDecoration(
+                            gradient: AppColors.primaryGradient,
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: 22.sp,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                8.horizontalSpace,
+                10.horizontalSpace,
                 Expanded(
                   child: Text(
                     name,
                     style: FontStyles.body14W700.copyWith(
-                      fontSize: 18.sp,
-                      color: const Color(0xFF3A3A3A),
+                      fontSize: 15.sp,
+                      color: const Color(0xFF2D2D2D),
                     ),
                   ),
                 ),
                 if (canManage) ...[
-                  8.horizontalSpace,
                   Container(
                     width: 32.w,
                     height: 32.w,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF5F0),
-                      borderRadius: BorderRadius.circular(8.r),
+                      gradient: AppColors.primaryGradient,
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
                     child: IconButton(
                       padding: EdgeInsets.zero,
-                      iconSize: 18.sp,
+                      iconSize: 16.sp,
                       onPressed: onEdit,
                       icon: const Icon(
                         Icons.edit_outlined,
-                        color: Color(0xFFFF7A3C),
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -500,12 +565,12 @@ class _ReplyCard extends StatelessWidget {
                     width: 32.w,
                     height: 32.w,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF0F0),
-                      borderRadius: BorderRadius.circular(8.r),
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
                     child: IconButton(
                       padding: EdgeInsets.zero,
-                      iconSize: 18.sp,
+                      iconSize: 16.sp,
                       onPressed: onDelete,
                       icon: const Icon(
                         Icons.delete_outline,
@@ -517,15 +582,17 @@ class _ReplyCard extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(height: 1, thickness: 0.8, color: Color(0xFFEAEAEA)),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+            padding: EdgeInsets.symmetric(
+              horizontal: 14.w,
+              vertical: 12.h,
+            ).copyWith(top: 0),
             child: Text(
               body,
               style: FontStyles.body14W500.copyWith(
-                fontSize: 17.sp,
-                color: const Color(0xFF727272),
-                height: 1.4,
+                fontSize: 14.sp,
+                color: const Color(0xFF616161),
+                height: 1.5,
               ),
             ),
           ),
@@ -610,7 +677,6 @@ class _ReplyCardShimmer extends StatelessWidget {
 }
 
 class _ReplyInputBar extends StatelessWidget {
-  final Color orange;
   final TextEditingController controller;
   final bool isSending;
   final bool isEditing;
@@ -618,7 +684,6 @@ class _ReplyInputBar extends StatelessWidget {
   final VoidCallback? onCancelEdit;
 
   const _ReplyInputBar({
-    required this.orange,
     required this.controller,
     required this.isSending,
     required this.isEditing,
@@ -628,93 +693,96 @@ class _ReplyInputBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 72.h,
-      child: Stack(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, -2),
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Container(
-            width: double.infinity,
-            height: 72.h,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: AppColors.borderColor),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
-            child: Row(
-              children: [
-                if (isEditing && onCancelEdit != null) ...[
-                  InkWell(
-                    onTap: onCancelEdit,
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 8.w),
-                      child: Text(
-                        'Cancel'.tr(),
-                        style: FontStyles.body12W400.copyWith(
-                          color: Colors.redAccent,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    maxLines: null,
-                    textAlignVertical: TextAlignVertical.top,
-                    decoration: InputDecoration(
-                      isCollapsed: true,
-                      border: InputBorder.none,
-                      hintText: isEditing
-                          ? 'community_reply_edit_placeholder'.tr()
-                          : 'community_reply_share_placeholder'.tr(),
-                      hintStyle: FontStyles.body14W500.copyWith(
-                        fontSize: 14.sp,
-                        color: Colors.grey.shade500,
-                      ),
-                    ),
-                    style: FontStyles.body14W500.copyWith(
-                      fontSize: 14.sp,
-                      color: AppColors.blackColor,
-                    ),
+          if (isEditing && onCancelEdit != null) ...[
+            InkWell(
+              onTap: onCancelEdit,
+              borderRadius: BorderRadius.circular(10.r),
+              child: Padding(
+                padding: EdgeInsets.all(6.w),
+                child: Text(
+                  'Cancel'.tr(),
+                  style: FontStyles.body12W400.copyWith(
+                    color: Colors.redAccent,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              ],
+              ),
+            ),
+            8.horizontalSpace,
+          ],
+          Expanded(
+            child: TextField(
+              controller: controller,
+              maxLines: 4,
+              minLines: 1,
+              decoration: InputDecoration(
+                isCollapsed: true,
+                border: InputBorder.none,
+                hintText: isEditing
+                    ? 'community_reply_edit_placeholder'.tr()
+                    : 'community_reply_share_placeholder'.tr(),
+                hintStyle: FontStyles.body14W500.copyWith(
+                  fontSize: 14.sp,
+                  color: Colors.grey.shade500,
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 4.w,
+                  vertical: 4.h,
+                ),
+              ),
+              style: FontStyles.body14W500.copyWith(
+                fontSize: 14.sp,
+                color: AppColors.blackColor,
+              ),
             ),
           ),
-          Positioned(
-            right: 10.w,
-            bottom: 8.h,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(24.r),
-                onTap: isSending ? null : onSend,
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  transitionBuilder: (child, animation) =>
-                      ScaleTransition(scale: animation, child: child),
-                  child: isSending
-                      ? Shimmer.fromColors(
-                          key: const ValueKey('sending'),
-                          baseColor: orange.withOpacity(0.6),
-                          highlightColor: Colors.white,
-                          child: Container(
-                            width: 28.w,
-                            height: 28.w,
-                            decoration: BoxDecoration(
-                              color: orange,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        )
-                      : SvgImageWidget(
-                          key: const ValueKey('send'),
-                          image: AppIcons.sendMessage,
-                          width: 24.w,
-                          height: 24.h,
+          10.horizontalSpace,
+          InkWell(
+            onTap: isSending ? null : onSend,
+            borderRadius: BorderRadius.circular(16.r),
+            child: Container(
+              width: 36.w,
+              height: 36.w,
+              decoration: BoxDecoration(
+                gradient: isSending ? null : AppColors.primaryGradient,
+                color: isSending ? Colors.grey.shade300 : null,
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 220),
+                child: isSending
+                    ? SizedBox(
+                        width: 20.w,
+                        height: 20.w,
+                        child: AnimatedLoading(
+                          color: Colors.white,
+                          size: 20,
                         ),
-                ),
+                      )
+                    : SvgImageWidget(
+                        image: AppIcons.sendMessage,
+                        width: 20.w,
+                        height: 20.w,
+                        // color: Colors.white,
+                      ),
               ),
             ),
           ),

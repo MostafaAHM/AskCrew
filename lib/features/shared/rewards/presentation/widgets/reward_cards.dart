@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/core/app_config/app_strings.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -268,10 +269,7 @@ class RewardStoreCard extends StatelessWidget {
                           ? SizedBox(
                               width: 20.w,
                               height: 20.w,
-                              child: const CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
+                              child: const AnimatedLoading(color: Colors.white),
                             )
                           : Text(
                               AppStrings.rewardsClaim.tr(),

@@ -66,42 +66,69 @@ class HomeEnterpriseBody extends StatelessWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        30.verticalSpace,
-                        HomeTopBar(showChat: true),
-                        16.height,
-                        Container(
-                          padding: EdgeInsets.all(16.w),
-                          child: ValueListenableBuilder(
-                            valueListenable: UserHelper.userNotifier,
-                            builder: (context, user, _) {
-                              return ProfileHeaderWidget(
-                                name: state.profile.name,
-                                profession: state.profile.profession,
-                                profileImage: state.profile.profileImage,
-                                isVerified: state.profile.waterMark,
-                                rating: state.profile.rating,
-                                reviewsCount: state.profile.reviewsCount,
-                                isAvailable:
-                                    user?.profile?.isAvailable ??
-                                    state.profile.isAvailable,
-                                images: state.profile.images,
-                              );
-                            },
+                  // Upper Section Redesign
+                  Container(
+                    padding: EdgeInsets.only(top: 30.h, bottom: 16.h),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          AppColors.primaryColor.withOpacity(0.05),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          HomeTopBar(showChat: true),
+                          20.height,
+                          // Profile Header Card
+                          Container(
+                            padding: EdgeInsets.all(18.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20.r),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primaryColor.withOpacity(
+                                    0.08,
+                                  ),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            child: ValueListenableBuilder(
+                              valueListenable: UserHelper.userNotifier,
+                              builder: (context, user, _) {
+                                return ProfileHeaderWidget(
+                                  name: state.profile.name,
+                                  profileImage: state.profile.profileImage,
+                                  isVerified: state.profile.waterMark,
+                                  rating: state.profile.rating,
+                                  reviewsCount: state.profile.reviewsCount,
+                                  isAvailable:
+                                      user?.profile?.isAvailable ??
+                                      state.profile.isAvailable,
+                                  images: state.profile.images,
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                        16.height,
-                        _PerformanceMetrics(metrics: state.metrics),
-                        16.height,
-                        EnterpriseActionButtons(),
-                      ],
+                          16.height,
+                          // Performance Metrics
+                          _PerformanceMetrics(metrics: state.metrics),
+                          16.height,
+                          // Action Buttons
+                          EnterpriseActionButtons(),
+                        ],
+                      ),
                     ),
                   ),
-                  16.height,
                   // Scrollable Content Section merged here
                   Padding(
                     padding: EdgeInsets.only(
@@ -259,7 +286,7 @@ class HomeEnterpriseBody extends StatelessWidget {
                         ),
                         24.height,
                         HomeSection(
-                          title: 'home_find_talent'.trOrFallback('Find Talent'),
+                          title: "home_find_talent".trOrFallback("Find Talent"),
                           onSeeMoreTap: () {
                             context.pushNamed(
                               Routes.findTalent,
@@ -267,7 +294,7 @@ class HomeEnterpriseBody extends StatelessWidget {
                             );
                           },
                           child: SizedBox(
-                            height: 140.h,
+                            height: 168.h,
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
                               itemCount: state.talents.length,
@@ -275,12 +302,13 @@ class HomeEnterpriseBody extends StatelessWidget {
                                   SizedBox(width: 12.w),
                               itemBuilder: (context, index) {
                                 final talent = state.talents[index];
-                                return _TalentCard(
+                                return _EnterpriseTalentCard(
                                   name: talent.name,
                                   role: talent.role,
-                                  specialization: talent.specialization,
                                   imageUrl: talent.imageUrl,
                                   isVerified: talent.waterMark,
+                                  rating: talent.rating,
+                                  specialization: talent.specialization,
                                   onTap: () {
                                     final userId = int.tryParse(talent.id);
                                     if (userId != null) {
@@ -308,7 +336,7 @@ class HomeEnterpriseBody extends StatelessWidget {
                             );
                           },
                           child: SizedBox(
-                            height: 140.h,
+                            height: 115.h,
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
                               itemCount: state.students.length,
@@ -316,12 +344,13 @@ class HomeEnterpriseBody extends StatelessWidget {
                                   SizedBox(width: 12.w),
                               itemBuilder: (context, index) {
                                 final student = state.students[index];
-                                return _TalentCard(
+                                return _EnterpriseStudentCard(
                                   name: student.name,
                                   role: student.role,
-                                  specialization: student.specialization,
                                   imageUrl: student.imageUrl,
                                   isVerified: student.waterMark,
+                                  rating: student.rating,
+                                  specialization: student.specialization,
                                   onTap: () {
                                     final userId = int.tryParse(student.id);
                                     if (userId != null) {
@@ -354,121 +383,147 @@ class HomeEnterpriseBody extends StatelessWidget {
   Widget _buildShimmerSkeleton(BuildContext context) {
     return Column(
       children: [
-        // Fixed Header Section with Shimmer
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              30.verticalSpace,
-              HomeTopBar(showChat: true),
-              16.height,
-              // Profile Header Shimmer
-              Container(
-                padding: EdgeInsets.all(16.w),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        // Profile Image Shimmer
-                        CustomShimmerWidget(
-                          width: 60.r,
-                          height: 60.r,
-                          shape: BoxShape.circle,
+        // Updated Upper Section Shimmer
+        Container(
+          padding: EdgeInsets.only(top: 30.h, bottom: 16.h),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppColors.primaryColor.withOpacity(0.05),
+                Colors.transparent,
+              ],
+            ),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                HomeTopBar(showChat: true),
+                20.height,
+                // Profile Header Card Shimmer
+                Container(
+                  padding: EdgeInsets.all(18.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          // Profile Image Shimmer
+                          CustomShimmerWidget(
+                            width: 78.r,
+                            height: 78.r,
+                            shape: BoxShape.circle,
+                          ),
+                          16.width,
+                          // Name and Info Shimmer
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomShimmerWidget(
+                                  width: double.infinity,
+                                  height: 22.h,
+                                  borderRadius: BorderRadius.circular(8.r),
+                                ),
+                                6.height,
+                                CustomShimmerWidget(
+                                  width: 120.w,
+                                  height: 18.h,
+                                  borderRadius: BorderRadius.circular(8.r),
+                                ),
+                                6.height,
+                                CustomShimmerWidget(
+                                  width: 100.w,
+                                  height: 14.h,
+                                  borderRadius: BorderRadius.circular(8.r),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                16.height,
+                // Performance Metrics Shimmer
+                Row(
+                  children: List.generate(
+                    2,
+                    (index) => Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(right: index < 1 ? 10.w : 0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.r),
                         ),
-                        12.width,
-                        // Name and Profession Shimmer
-                        Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 12.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CustomShimmerWidget(
                                 width: double.infinity,
-                                height: 20.h,
+                                height: 16.h,
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
-                              8.height,
+                              2.height,
                               CustomShimmerWidget(
-                                width: 150.w,
-                                height: 16.h,
+                                width: 50.w,
+                                height: 24.h,
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
                             ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                    16.height,
-                    // Rating Shimmer
-                    Row(
-                      children: [
-                        CustomShimmerWidget(
-                          width: 100.w,
-                          height: 20.h,
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                      ],
+                  ),
+                ),
+                16.height,
+                // Action Buttons Shimmer
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomShimmerWidget(
+                        width: double.infinity,
+                        height: 45.h,
+                        borderRadius: BorderRadius.circular(24.r),
+                      ),
+                    ),
+                    10.width,
+                    Expanded(
+                      child: CustomShimmerWidget(
+                        width: double.infinity,
+                        height: 45.h,
+                        borderRadius: BorderRadius.circular(24.r),
+                      ),
+                    ),
+                    10.width,
+                    Expanded(
+                      child: CustomShimmerWidget(
+                        width: double.infinity,
+                        height: 45.h,
+                        borderRadius: BorderRadius.circular(24.r),
+                      ),
                     ),
                   ],
                 ),
-              ),
-              16.height,
-              // Performance Metrics Shimmer
-              Row(
-                children: List.generate(
-                  3,
-                  (index) => Expanded(
-                    child: Container(
-                      margin: EdgeInsets.only(right: index < 2 ? 8.w : 0),
-                      padding: EdgeInsets.all(12.w),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: Column(
-                        children: [
-                          CustomShimmerWidget(
-                            width: double.infinity,
-                            height: 16.h,
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          8.height,
-                          CustomShimmerWidget(
-                            width: 40.w,
-                            height: 20.h,
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              16.height,
-              // Action Buttons Shimmer
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomShimmerWidget(
-                      width: double.infinity,
-                      height: 50.h,
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                  ),
-                  12.width,
-                  Expanded(
-                    child: CustomShimmerWidget(
-                      width: double.infinity,
-                      height: 50.h,
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-        16.height,
         // Scrollable Content Shimmer
         Expanded(
           child: SingleChildScrollView(
@@ -506,14 +561,14 @@ class HomeEnterpriseBody extends StatelessWidget {
                 ),
                 12.height,
                 SizedBox(
-                  height: 150.h,
+                  height: 200.h,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: 3,
                     separatorBuilder: (_, __) => 12.width,
                     itemBuilder: (_, __) => CustomShimmerWidget(
-                      width: 105.w,
-                      height: 150.h,
+                      width: 180.w,
+                      height: 200.h,
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                   ),
@@ -540,7 +595,7 @@ class _PerformanceMetrics extends StatelessWidget {
 
     return Column(
       children: [
-        // Views and Bookings in a row
+        // Views and Bookings in a row with modern styling
         if (standardMetrics.isNotEmpty)
           Row(
             children: standardMetrics
@@ -550,23 +605,45 @@ class _PerformanceMetrics extends StatelessWidget {
                   (entry) => Expanded(
                     child: Padding(
                       padding: EdgeInsetsDirectional.only(
-                        end: entry.key < standardMetrics.length - 1 ? 12.w : 0,
+                        end: entry.key < standardMetrics.length - 1 ? 10.w : 0,
                       ),
-                      child: PerformanceMetricCard(
-                        type: entry.value.type,
-                        label: entry.value.label.tr(),
-                        value: entry.value.value,
-                        topWorkTitle: entry.value.topWorkTitle,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primaryColor.withOpacity(0.06),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: PerformanceMetricCard(
+                          type: entry.value.type,
+                          label: entry.value.label.tr(),
+                          value: entry.value.value,
+                          topWorkTitle: entry.value.topWorkTitle,
+                        ),
                       ),
                     ),
                   ),
                 )
                 .toList(),
           ),
-        // Top Work in a separate row (full width)
+        // Top Work in a separate row (full width) with modern styling
         if (topWorkMetrics.isNotEmpty) ...[
           12.height,
-          SizedBox(
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.r),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primaryColor.withOpacity(0.06),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
             width: double.infinity,
             child: PerformanceMetricCard(
               type: topWorkMetrics.first.type,
@@ -584,7 +661,6 @@ class _PerformanceMetrics extends StatelessWidget {
 class _TalentCard extends StatelessWidget {
   final String name;
   final String role;
-  final String specialization;
   final String? imageUrl;
   final bool isVerified;
   final VoidCallback onTap;
@@ -592,7 +668,6 @@ class _TalentCard extends StatelessWidget {
   const _TalentCard({
     required this.name,
     required this.role,
-    this.specialization = '',
     this.imageUrl,
     this.isVerified = false,
     required this.onTap,
@@ -672,8 +747,8 @@ class _TalentCard extends StatelessWidget {
               ],
             ),
             4.height,
-            // Role & Specialization
-            if (role.isNotEmpty) ...[
+            // Role
+            if (role.isNotEmpty)
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
                 decoration: BoxDecoration(
@@ -692,19 +767,6 @@ class _TalentCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              2.height,
-            ],
-            Text(
-              specialization,
-              style: TextStyle(
-                fontSize: 10.sp,
-                color: AppColors.greyText,
-                fontWeight: FontWeight.w400,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
           ],
         ),
       ),
@@ -717,6 +779,490 @@ class _TalentCard extends StatelessWidget {
       child: Icon(Icons.person, size: 30.sp, color: AppColors.greyText),
     );
   }
+}
+
+// New Vertical Design - Avatar Top with Content Below
+class _EnterpriseTalentCard extends StatelessWidget {
+  final String name;
+  final String role;
+  final String? imageUrl;
+  final bool isVerified;
+  final double rating;
+  final String specialization;
+  final VoidCallback onTap;
+
+  const _EnterpriseTalentCard({
+    required this.name,
+    required this.role,
+    this.imageUrl,
+    this.isVerified = false,
+    this.rating = 0.0,
+    this.specialization = '',
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 140.w,
+        height: 168.h,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primaryColor.withOpacity(0.12),
+              blurRadius: 14,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Gradient top background
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 60.h,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppColors.primaryColor.withOpacity(0.18),
+                      AppColors.secondaryColor.withOpacity(0.12),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.r),
+                    topRight: Radius.circular(16.r),
+                  ),
+                ),
+              ),
+            ),
+            // Content
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Avatar with verified badge
+                  Stack(
+                    children: [
+                      Container(
+                        width: 54.w,
+                        height: 54.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          border: Border.all(
+                            color: AppColors.primaryColor.withOpacity(0.25),
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primaryColor.withOpacity(0.1),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: imageUrl != null && imageUrl!.isNotEmpty
+                              ? CustomCachedNetworkImage(
+                                  url: imageUrl!,
+                                  fit: BoxFit.cover,
+                                )
+                              : Icon(
+                                  Icons.person,
+                                  size: 26.sp,
+                                  color: AppColors.primaryColor.withOpacity(
+                                    0.45,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      if (isVerified)
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: EdgeInsets.all(2.5.w),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppColors.secondaryColor,
+                                  AppColors.primaryColor,
+                                ],
+                              ),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 1.5,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.secondaryColor.withOpacity(
+                                    0.25,
+                                  ),
+                                  blurRadius: 3,
+                                  offset: const Offset(0, 1.5),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.verified,
+                              color: Colors.white,
+                              size: 10.sp,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  SizedBox(height: 6.h),
+                  // Name
+                  Text(
+                    name,
+                    style: TextStyle(
+                      fontSize: 11.5.sp,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.lightTText,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 4.5.h),
+                  // Rating stars
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ...List.generate(5, (index) {
+                        return Icon(
+                          index < rating.round()
+                              ? Icons.star_rounded
+                              : Icons.star_border_rounded,
+                          color: AppColors.secondaryColor,
+                          size: 9.5.sp,
+                        );
+                      }),
+                      SizedBox(width: 4.w),
+                      if (rating > 0)
+                        Text(
+                          rating.toStringAsFixed(1),
+                          style: TextStyle(
+                            fontSize: 9.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.secondaryColor,
+                          ),
+                        ),
+                    ],
+                  ),
+                  SizedBox(height: 4.5.h),
+                  // Role tag
+                  if (role.isNotEmpty)
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 7.w,
+                        vertical: 2.5.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(9.r),
+                      ),
+                      child: Text(
+                        role,
+                        style: TextStyle(
+                          fontSize: 8.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primaryColor,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  // Specialization
+                  if (specialization.isNotEmpty)
+                    Padding(
+                      padding: EdgeInsets.only(top: 3.h),
+                      child: Text(
+                        specialization,
+                        style: TextStyle(
+                          fontSize: 7.5.sp,
+                          color: AppColors.greyText,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Brand new design 2 - Modern Glass Effect Card with Diagonal Cut
+class _EnterpriseStudentCard extends StatelessWidget {
+  final String name;
+  final String role;
+  final String? imageUrl;
+  final bool isVerified;
+  final double rating;
+  final String specialization;
+  final VoidCallback onTap;
+
+  const _EnterpriseStudentCard({
+    required this.name,
+    required this.role,
+    this.imageUrl,
+    this.isVerified = false,
+    this.rating = 0.0,
+    this.specialization = '',
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 200.w,
+        height: 115.h,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Diagonal accent corner
+            Positioned(
+              top: 0,
+              right: 0,
+              child: CustomPaint(
+                size: Size(60.w, 60.h),
+                painter: DiagonalPainter(),
+              ),
+            ),
+            // Content
+            Padding(
+              padding: EdgeInsets.all(12.w),
+              child: Row(
+                children: [
+                  // Image Section
+                  Container(
+                    width: 65.w,
+                    height: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14.r),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          AppColors.secondaryColor.withOpacity(0.15),
+                          AppColors.primaryColor.withOpacity(0.1),
+                        ],
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 50.w,
+                            height: 50.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.secondaryColor.withOpacity(
+                                    0.1,
+                                  ),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: ClipOval(
+                              child: imageUrl != null && imageUrl!.isNotEmpty
+                                  ? CustomCachedNetworkImage(
+                                      url: imageUrl!,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Icon(
+                                      Icons.school,
+                                      size: 24.sp,
+                                      color: AppColors.secondaryColor
+                                          .withOpacity(0.5),
+                                    ),
+                            ),
+                          ),
+                        ),
+                        if (isVerified)
+                          Positioned(
+                            top: 2.h,
+                            right: 2.w,
+                            child: Container(
+                              padding: EdgeInsets.all(4.w),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppColors.secondaryColor,
+                                    AppColors.primaryColor,
+                                  ],
+                                ),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.secondaryColor.withOpacity(
+                                      0.3,
+                                    ),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                Icons.verified,
+                                color: Colors.white,
+                                size: 10.sp,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  10.width,
+                  // Text Content
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          name,
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w900,
+                            color: AppColors.lightTText,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        4.height,
+                        // Role badge
+                        if (role.isNotEmpty)
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8.w,
+                              vertical: 3.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.secondaryColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(6.r),
+                              border: Border.all(
+                                color: AppColors.secondaryColor.withOpacity(
+                                  0.2,
+                                ),
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              role,
+                              style: TextStyle(
+                                fontSize: 8.5.sp,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.secondaryColor,
+                              ),
+                            ),
+                          ),
+                        5.height,
+                        // Stars
+                        Row(
+                          children: [
+                            ...List.generate(5, (index) {
+                              return Icon(
+                                index < rating.round()
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: AppColors.secondaryColor,
+                                size: 10.sp,
+                              );
+                            }),
+                            5.width,
+                            if (rating > 0)
+                              Text(
+                                rating.toStringAsFixed(1),
+                                style: TextStyle(
+                                  fontSize: 9.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.secondaryColor,
+                                ),
+                              ),
+                          ],
+                        ),
+                        4.height,
+                        // Specialization
+                        if (specialization.isNotEmpty)
+                          Text(
+                            specialization,
+                            style: TextStyle(
+                              fontSize: 8.5.sp,
+                              color: AppColors.greyText,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Custom painter for diagonal corner
+class DiagonalPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = AppColors.secondaryColor.withOpacity(0.15)
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+    path.moveTo(size.width, 0);
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, 0);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
 class _EnterpriseTrendingMovieCard extends StatelessWidget {

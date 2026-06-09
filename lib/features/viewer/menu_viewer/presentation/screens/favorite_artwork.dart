@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'package:aflam/core/app_config/app_strings.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -53,7 +54,7 @@ class _FavoriteArtworkScreenState extends State<FavoriteArtworkScreen> {
                   builder: (context, state) {
                     if (state is FavoritesLoading &&
                         state.favoritesKeys.isEmpty) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(child: AnimatedLoading());
                     }
 
                     if (state is FavoritesError &&

@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import '../../../../../core/app_config/app_colors.dart';
 import '../../../../../core/app_config/font_styles.dart';
 import '../../../../../core/widgets/fields/custom_text_field.dart';
@@ -260,10 +261,7 @@ class _EditQuestionBottomSheetState extends State<EditQuestionBottomSheet> {
                               ? SizedBox(
                                   width: 22.w,
                                   height: 22.w,
-                                  child: const CircularProgressIndicator(
-                                    strokeWidth: 2.4,
-                                    color: Colors.white,
-                                  ),
+                                  child: const AnimatedLoading(color: Colors.white),
                                 )
                               : Text(
                                   'saveChanges'.tr(),

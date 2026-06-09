@@ -15,9 +15,7 @@ import '../../../../../../core/widgets/shimmer/custom_shimmer_widget.dart';
 import 'artwork_card.dart';
 
 class SeriesList extends StatefulWidget {
-  final Color orange;
-
-  const SeriesList({super.key, required this.orange});
+  const SeriesList({super.key});
 
   @override
   State<SeriesList> createState() => _SeriesListState();
@@ -81,7 +79,6 @@ class _SeriesListState extends State<SeriesList> {
                 itemBuilder: (c, i) {
                   final series = seriesList[i];
                   return ArtworkCard(
-                    orange: widget.orange,
                     date: _formatDate(series.createdAt),
                     imageUrl: series.coverPhoto ?? '',
                     rating: series.ratingMean ?? 0.0,

@@ -105,7 +105,6 @@ class _AdvertiseListContent extends StatelessWidget {
                     date: _formatDate(advertise.createdAt),
                     views: advertise.viewsCount.toString(),
                     imageUrl: advertise.coverImage,
-                    orange: const Color(0xFFFF5722),
                     price: advertise.price,
                     isOwner: advertise.isOwner,
                     isReady: true,

@@ -1,3 +1,5 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
+import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,7 +23,6 @@ class JobItemData {
 
 class CommunityJobCard extends StatelessWidget {
   final JobItemData data;
-  final Color orange;
   final Color pillColor;
   final bool isMine;
   final bool applied;
@@ -33,7 +34,6 @@ class CommunityJobCard extends StatelessWidget {
   const CommunityJobCard({
     super.key,
     required this.data,
-    required this.orange,
     required this.pillColor,
     required this.isMine,
     this.applied = false,
@@ -130,7 +130,7 @@ class CommunityJobCard extends StatelessWidget {
                                   onPressed: onEdit,
                                   icon: Icon(
                                     Icons.edit_outlined,
-                                    color: orange,
+                                    color: AppColors.primaryColor,
                                   ),
                                 ),
                               ),
@@ -210,12 +210,9 @@ class CommunityJobCard extends StatelessWidget {
                                           child: SizedBox(
                                             width: 12.w,
                                             height: 12.w,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                    orange,
-                                                  ),
+                                            child: AnimatedLoading(
+                                              color: AppColors.primaryColor,
+                                              size: 12,
                                             ),
                                           ),
                                         ),
@@ -228,7 +225,7 @@ class CommunityJobCard extends StatelessWidget {
                                         style: TextStyle(
                                           fontSize: 17.sp,
                                           fontWeight: FontWeight.w600,
-                                          color: orange,
+                                          color: AppColors.primaryColor,
                                         ),
                                       ),
                               ),

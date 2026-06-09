@@ -26,7 +26,9 @@ class FindTalentStudentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBGColor,
+      backgroundColor: isTalent
+          ? AppColors.lightBGColor
+          : const Color(0xFFFFF8F0),
       appBar: CustomAppBar.backAppBar(showLogoInBackAppBar: true),
       body: SafeArea(
         child: Column(
@@ -39,7 +41,9 @@ class FindTalentStudentScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24.sp,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.lightTText,
+                  color: isTalent
+                      ? AppColors.lightTText
+                      : const Color(0xFF50177A),
                 ),
               ),
             ),
@@ -62,13 +66,14 @@ class FindTalentStudentScreen extends StatelessWidget {
                           crossAxisCount: 2,
                           crossAxisSpacing: 12.w,
                           mainAxisSpacing: 16.h,
-                          childAspectRatio: 0.63,
+                          childAspectRatio: isTalent ? 0.55 : 0.60,
                         ),
                         itemCount: items.length,
                         itemBuilder: (context, index) {
                           final talent = items[index];
                           return _ProfileCard(
                             talent: talent,
+                            isTalent: isTalent,
                             onTap: () {
                               if (isTalent) {
                                 context.pushNamed(
@@ -99,36 +104,54 @@ class FindTalentStudentScreen extends StatelessWidget {
 
 class _ProfileCard extends StatelessWidget {
   final TalentModel talent;
+  final bool isTalent;
   final VoidCallback onTap;
 
-  const _ProfileCard({required this.talent, required this.onTap});
+  const _ProfileCard({
+    required this.talent,
+    required this.isTalent,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
+    return isTalent ? _buildTalentCard(context) : _buildStudentCard(context);
+  }
+
+  Widget _buildTalentCard(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.whiteColor,
-          borderRadius: BorderRadius.circular(18.r),
+          borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 18,
-              offset: const Offset(0, 10),
+              color: AppColors.primaryColor.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(18.r),
+          borderRadius: BorderRadius.circular(20.r),
           child: Stack(
             children: [
               Column(
                 children: [
                   Container(
-                    height: 130.h,
+                    height: 135.h,
                     width: double.infinity,
-                    color: const Color(0xFFE9E9E9),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppColors.primaryColor.withOpacity(0.15),
+                          AppColors.secondaryColor.withOpacity(0.1),
+                        ],
+                      ),
+                    ),
                     child:
                         (talent.imageUrl != null && talent.imageUrl!.isNotEmpty)
                         ? CustomCachedNetworkImage(
@@ -138,22 +161,18 @@ class _ProfileCard extends StatelessWidget {
                         : Center(
                             child: Icon(
                               Icons.person,
-                              size: 42.sp,
-                              color: AppColors.greyText,
+                              size: 48.sp,
+                              color: AppColors.primaryColor.withOpacity(0.5),
                             ),
                           ),
                   ),
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 10.h,
-                      ),
+                      padding: EdgeInsets.all(14.w),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Flexible(
                                 child: Text(
@@ -161,25 +180,24 @@ class _ProfileCard extends StatelessWidget {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14.5.sp,
+                                    fontWeight: FontWeight.w800,
                                     color: AppColors.lightTText,
                                   ),
                                 ),
                               ),
                               if (talent.waterMark) ...[
-                                6.width,
+                                5.width,
                                 Icon(
                                   Icons.verified,
-                                  size: 16.sp,
+                                  size: 15.sp,
                                   color: const Color(0xFF2F80ED),
                                 ),
                               ],
                             ],
                           ),
-                          4.height,
+                          6.height,
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ...List.generate(5, (i) {
                                 final full = i < talent.rating.floor();
@@ -187,24 +205,23 @@ class _ProfileCard extends StatelessWidget {
                                     i == talent.rating.floor() &&
                                     (talent.rating - talent.rating.floor()) >=
                                         0.5;
-
                                 return Icon(
                                   half
                                       ? Icons.star_half_rounded
                                       : full
                                       ? Icons.star_rounded
-                                      : Icons.star_rounded,
-                                  size: 15.sp,
+                                      : Icons.star_outline_rounded,
+                                  size: 14.sp,
                                   color: full || half
                                       ? AppColors.secondaryColor
                                       : const Color(0xFFD9D9D9),
                                 );
                               }),
-                              8.width,
+                              6.width,
                               Text(
                                 talent.rating.toStringAsFixed(1),
                                 style: TextStyle(
-                                  fontSize: 13.sp,
+                                  fontSize: 12.5.sp,
                                   fontWeight: FontWeight.w700,
                                   color: AppColors.secondaryColor,
                                 ),
@@ -212,46 +229,37 @@ class _ProfileCard extends StatelessWidget {
                             ],
                           ),
                           if (talent.role.isNotEmpty) ...[
-                            6.height,
+                            8.height,
                             Container(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 10.w,
-                                vertical: 4.h,
+                                vertical: 5.h,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.secondaryColor.withOpacity(
-                                  0.1,
-                                ),
-                                borderRadius: BorderRadius.circular(8.r),
-                                border: Border.all(
-                                  color: AppColors.secondaryColor.withOpacity(
-                                    0.2,
-                                  ),
-                                  width: 0.5,
-                                ),
+                                color: AppColors.primaryColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10.r),
                               ),
                               child: Text(
                                 talent.role,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  fontSize: 12.sp,
+                                  fontSize: 11.5.sp,
                                   fontWeight: FontWeight.w700,
-                                  color: AppColors.secondaryColor,
+                                  color: AppColors.primaryColor,
                                 ),
                               ),
                             ),
                           ],
                           if (talent.specialization.isNotEmpty) ...[
-                            2.height,
+                            6.height,
                             Text(
                               talent.specialization,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontSize: 11.sp,
-                                fontWeight: FontWeight.w400,
                                 color: AppColors.greyText,
+                                fontWeight: FontWeight.w500,
+                                height: 1.3,
                               ),
                             ),
                           ],
@@ -262,15 +270,248 @@ class _ProfileCard extends StatelessWidget {
                 ],
               ),
               Positioned(
-                top: 10.h,
-                left: 10.w,
+                top: 12.h,
+                right: 12.w,
                 child: Container(
-                  width: 14.w,
-                  height: 14.w,
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: AppColors.whiteColor.withOpacity(0.95),
+                    borderRadius: BorderRadius.circular(20.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 8,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 8.w,
+                        height: 8.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: talent.isAvailable
+                              ? AppColors.green
+                              : Colors.red,
+                        ),
+                      ),
+                      4.width,
+                      Text(
+                        talent.isAvailable ? 'Available' : 'Busy',
+                        style: TextStyle(
+                          fontSize: 10.5.sp,
+                          fontWeight: FontWeight.w700,
+                          color: talent.isAvailable
+                              ? AppColors.green
+                              : Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStudentCard(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.whiteColor,
+          borderRadius: BorderRadius.circular(22.r),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF50177A).withOpacity(0.1),
+              blurRadius: 25,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22.r),
+          child: Stack(
+            children: [
+              Positioned(
+                top: -30.h,
+                right: -30.w,
+                child: Container(
+                  width: 100.w,
+                  height: 100.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFE5B00).withOpacity(0.08),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -40.h,
+                left: -40.w,
+                child: Container(
+                  width: 120.w,
+                  height: 120.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFF50177A).withOpacity(0.06),
+                  ),
+                ),
+              ),
+              Column(
+                children: [
+                  16.height,
+                  Container(
+                    width: 90.w,
+                    height: 90.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFF50177A).withOpacity(0.15),
+                        width: 3.w,
+                      ),
+                    ),
+                    child: ClipOval(
+                      child:
+                          (talent.imageUrl != null &&
+                              talent.imageUrl!.isNotEmpty)
+                          ? CustomCachedNetworkImage(
+                              url: talent.imageUrl!,
+                              fit: BoxFit.cover,
+                            )
+                          : Container(
+                              color: const Color(0xFFF5F0FF),
+                              child: Icon(
+                                Icons.person,
+                                size: 40.sp,
+                                color: const Color(0xFF50177A).withOpacity(0.5),
+                              ),
+                            ),
+                    ),
+                  ),
+                  12.height,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          talent.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14.5.sp,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF50177A),
+                          ),
+                        ),
+                      ),
+                      if (talent.waterMark) ...[
+                        5.width,
+                        Icon(
+                          Icons.verified,
+                          size: 15.sp,
+                          color: const Color(0xFF2F80ED),
+                        ),
+                      ],
+                    ],
+                  ),
+                  6.height,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ...List.generate(5, (i) {
+                        final full = i < talent.rating.floor();
+                        final half =
+                            i == talent.rating.floor() &&
+                            (talent.rating - talent.rating.floor()) >= 0.5;
+                        return Icon(
+                          half
+                              ? Icons.star_half_rounded
+                              : full
+                              ? Icons.star_rounded
+                              : Icons.star_outline_rounded,
+                          size: 14.sp,
+                          color: full || half
+                              ? const Color(0xFFFE5B00)
+                              : const Color(0xFFE0E0E0),
+                        );
+                      }),
+                      6.width,
+                      Text(
+                        talent.rating.toStringAsFixed(1),
+                        style: TextStyle(
+                          fontSize: 12.5.sp,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFFFE5B00),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (talent.role.isNotEmpty) ...[
+                    8.height,
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 6.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFE5B00).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Text(
+                        talent.role,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 11.5.sp,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFFFE5B00),
+                        ),
+                      ),
+                    ),
+                  ],
+                  if (talent.specialization.isNotEmpty) ...[
+                    10.height,
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 6.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF5F0FF),
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        child: Text(
+                          talent.specialization,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 10.5.sp,
+                            color: const Color(0xFF50177A),
+                            fontWeight: FontWeight.w600,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              Positioned(
+                top: 14.h,
+                left: 14.w,
+                child: Container(
+                  width: 16.w,
+                  height: 16.w,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: talent.isAvailable ? AppColors.green : Colors.red,
-                    border: Border.all(color: AppColors.whiteColor, width: 2),
+                    border: Border.all(color: AppColors.whiteColor, width: 3),
                   ),
                 ),
               ),

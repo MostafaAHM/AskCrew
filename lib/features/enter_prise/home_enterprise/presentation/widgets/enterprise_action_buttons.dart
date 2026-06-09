@@ -74,12 +74,19 @@ class _ActionButton extends StatelessWidget {
         height: 45.h,
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         decoration: BoxDecoration(
-          color: const Color(0xFFFE5B00),
+          gradient: LinearGradient(
+            colors: [
+              AppColors.primaryColor,
+              AppColors.secondaryColor,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           borderRadius: BorderRadius.circular(24.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.25),
-              blurRadius: 4,
+              color: AppColors.primaryColor.withOpacity(0.3),
+              blurRadius: 8,
               offset: const Offset(0, 4),
               spreadRadius: 0,
             ),

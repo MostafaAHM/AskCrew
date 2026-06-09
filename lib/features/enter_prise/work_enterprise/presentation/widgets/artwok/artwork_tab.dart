@@ -14,9 +14,7 @@ import '../../cubit/get_series_cubit.dart';
 import '../../cubit/content_management_cubit.dart';
 
 class ArtworkTab extends StatelessWidget {
-  final Color orange;
-
-  const ArtworkTab({super.key, required this.orange});
+  const ArtworkTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,56 +28,53 @@ class ArtworkTab extends StatelessWidget {
         length: 3,
         child: Column(
           children: [
-          Builder(
-            builder: (context) {
-              final controller = DefaultTabController.of(context);
-              return AnimatedBuilder(
-                animation: controller,
-                builder: (context, _) {
-                  final current = controller.index;
+            Builder(
+              builder: (context) {
+                final controller = DefaultTabController.of(context);
+                return AnimatedBuilder(
+                  animation: controller,
+                  builder: (context, _) {
+                    final current = controller.index;
 
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SegmentButton(
-                        text: 'Movie'.tr(),
-                        selected: current == 0,
-                        orange: orange,
-                        onTap: () => controller.animateTo(0),
-                      ),
-                      8.width,
-                      SegmentButton(
-                        text: 'Series'.tr(),
-                        selected: current == 1,
-                        orange: orange,
-                        onTap: () => controller.animateTo(1),
-                      ),
-                      8.width,
-                      SegmentButton(
-                        text: 'Advertise'.tr(),
-                        selected: current == 2,
-                        orange: orange,
-                        onTap: () => controller.animateTo(2),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-          12.height,
-          Expanded(
-            child: TabBarView(
-              children: [
-                ArtworkList(orange: orange),
-                SeriesList(orange: orange),
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SegmentButton(
+                          text: 'Movie'.tr(),
+                          selected: current == 0,
+                          onTap: () => controller.animateTo(0),
+                        ),
+                        8.width,
+                        SegmentButton(
+                          text: 'Series'.tr(),
+                          selected: current == 1,
+                          onTap: () => controller.animateTo(1),
+                        ),
+                        8.width,
+                        SegmentButton(
+                          text: 'Advertise'.tr(),
+                          selected: current == 2,
+                          onTap: () => controller.animateTo(2),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+            12.height,
+            Expanded(
+              child: TabBarView(
+                children: [
+                ArtworkList(),
+                SeriesList(),
                 AdvertiseList(),
               ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
     );
   }
 }

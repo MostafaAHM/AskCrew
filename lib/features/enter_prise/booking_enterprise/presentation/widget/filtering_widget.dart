@@ -1,3 +1,4 @@
+import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:aflam/core/app_config/app_strings.dart';
 import 'package:aflam/core/extensions/space_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -26,8 +27,6 @@ class FilteringWidget extends StatefulWidget {
 class _FilteringWidgetState extends State<FilteringWidget> {
   bool _isMineSelected = true;
   final List<String> _selectedTypes = [];
-  Color get _orange => const Color(0xFFFF7A3C);
-  Color get _lightPill => const Color(0xFFFFF0E3);
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +37,7 @@ class _FilteringWidgetState extends State<FilteringWidget> {
         Container(
           height: 40.h,
           decoration: BoxDecoration(
-            color: _lightPill,
+            gradient: AppColors.primaryGradient,
             borderRadius: BorderRadius.circular(40.r),
           ),
           padding: EdgeInsets.all(4.w),
@@ -77,7 +76,8 @@ class _FilteringWidgetState extends State<FilteringWidget> {
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: isSelected ? _orange : Colors.transparent,
+          gradient: isSelected ? AppColors.primaryGradient : null,
+          color: isSelected ? null : Colors.transparent,
           borderRadius: BorderRadius.circular(40.r),
         ),
         child: Text(
@@ -85,7 +85,7 @@ class _FilteringWidgetState extends State<FilteringWidget> {
           style: TextStyle(
             fontSize: 14.sp,
             fontWeight: FontWeight.w600,
-            color: isSelected ? Colors.white : const Color(0xff1A0A00),
+            color: isSelected ? Colors.white : Colors.white,
           ),
         ),
       ),

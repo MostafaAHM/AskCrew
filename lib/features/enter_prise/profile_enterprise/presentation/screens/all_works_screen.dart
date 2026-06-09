@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'dart:ui';
 
 import 'package:aflam/core/app_config/app_colors.dart';
@@ -160,7 +161,7 @@ class _AllWorkItem extends StatelessWidget {
                 placeholder: (context, url) => Container(
                   color: Colors.grey[200],
                   child: const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: AnimatedLoading(),
                   ),
                 ),
                 errorWidget: (context, url, error) => Container(
@@ -292,7 +293,7 @@ class _AllWorkItem extends StatelessWidget {
                 imageUrl: imageUrl,
                 fit: BoxFit.contain,
                 placeholder: (context, url) => const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
+                  child: AnimatedLoading(color: Colors.white),
                 ),
                 errorWidget: (context, url, error) => const Center(
                   child: Icon(Icons.error, color: Colors.white54, size: 48),

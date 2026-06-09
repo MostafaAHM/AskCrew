@@ -13,9 +13,7 @@ import '../../cubit/content_management_cubit.dart';
 import 'artwork_card.dart';
 
 class ArtworkList extends StatefulWidget {
-  final Color orange;
-
-  const ArtworkList({super.key, required this.orange});
+  const ArtworkList({super.key});
 
   @override
   State<ArtworkList> createState() => _ArtworkListState();
@@ -90,7 +88,6 @@ class _ArtworkListState extends State<ArtworkList> {
                 }
                 final movie = movies[i];
                 return ArtworkCard(
-                  orange: widget.orange,
                   date: _formatDate(movie.createdAt),
                   imageUrl: movie.coverImage ?? '',
                   rating: movie.ratingMean ?? 0.0,

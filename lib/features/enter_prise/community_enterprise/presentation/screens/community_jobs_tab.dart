@@ -15,7 +15,6 @@ import 'post_job_screen.dart';
 import '../../data/model/jops/response/jop_item_model.dart';
 
 class CommunityJobsTab extends StatefulWidget {
-  final Color orange;
   final Color lightPill;
   final bool isAddingJob;
   final bool isStudent;
@@ -29,7 +28,6 @@ class CommunityJobsTab extends StatefulWidget {
 
   const CommunityJobsTab({
     super.key,
-    required this.orange,
     required this.lightPill,
     required this.isAddingJob,
     required this.isStudent,
@@ -89,6 +87,7 @@ class _CommunityJobsTabState extends State<CommunityJobsTab> {
             return PostJobScreen(
               key: const ValueKey('post_job_screen'),
               jobToEdit: widget.jobToEdit,
+              onBack: widget.onJobCreated,
               onJobCreated: () {
                 widget.onJobCreated();
                 context.read<GetAllJopsCubit>().getAllJops(
@@ -232,7 +231,6 @@ class _CommunityJobsTabState extends State<CommunityJobsTab> {
                   date: dateString,
                   imageUrl: job.image ?? '',
                 ),
-                orange: widget.orange,
                 pillColor: widget.lightPill,
                 isMine: widget.selectedFilter == JobsFilter.yourOwn,
                 applied: job.applied,

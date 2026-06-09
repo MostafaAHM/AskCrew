@@ -28,43 +28,51 @@ class QuestionItemData {
 }
 
 class AskQuestionFab extends StatelessWidget {
-  final Color orange;
   final BorderRadius borderRadius;
 
-  const AskQuestionFab({
-    super.key,
-    required this.orange,
-    required this.borderRadius,
-  });
+  const AskQuestionFab({super.key, required this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: orange,
-      elevation: 5,
-      borderRadius: borderRadius,
-      child: InkWell(
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
         borderRadius: borderRadius,
-        onTap: () {
-          final cubit = context.read<QuestionsCubit>();
-          showModalBottomSheet(
-            context: context,
-            useRootNavigator: true,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (sheetContext) {
-              return BlocProvider.value(
-                value: cubit,
-                child: const AskQuestionBottomSheet(),
-              );
-            },
-          );
-        },
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
-          child: Text(
-            'ask_new_question'.tr(),
-            style: FontStyles.headline16.copyWith(color: Colors.white),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryColor.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: borderRadius,
+        child: InkWell(
+          borderRadius: borderRadius,
+          onTap: () {
+            final cubit = context.read<QuestionsCubit>();
+            showModalBottomSheet(
+              context: context,
+              useRootNavigator: true,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (sheetContext) {
+                return BlocProvider.value(
+                  value: cubit,
+                  child: const AskQuestionBottomSheet(),
+                );
+              },
+            );
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+            child: Text(
+              'ask_new_question'.tr(),
+              style: FontStyles.headline16.copyWith(color: Colors.white),
+            ),
           ),
         ),
       ),
@@ -73,31 +81,42 @@ class AskQuestionFab extends StatelessWidget {
 }
 
 class PostJobFab extends StatelessWidget {
-  final Color orange;
   final BorderRadius borderRadius;
   final VoidCallback onTap;
 
   const PostJobFab({
     super.key,
-    required this.orange,
     required this.borderRadius,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: orange,
-      elevation: 5,
-      borderRadius: borderRadius,
-      child: InkWell(
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
         borderRadius: borderRadius,
-        onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
-          child: Text(
-            'add_job'.tr(),
-            style: FontStyles.headline16.copyWith(color: Colors.white),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryColor.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: borderRadius,
+        child: InkWell(
+          borderRadius: borderRadius,
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+            child: Text(
+              'add_job'.tr(),
+              style: FontStyles.headline16.copyWith(color: Colors.white),
+            ),
           ),
         ),
       ),
@@ -107,7 +126,6 @@ class PostJobFab extends StatelessWidget {
 
 class CommunityQuestionCard extends StatelessWidget {
   final QuestionItemData data;
-  final Color orange;
   final int? currentUserId;
   final int questionAuthorId;
   final ValueChanged<int>? onTapReplies;
@@ -117,7 +135,6 @@ class CommunityQuestionCard extends StatelessWidget {
   const CommunityQuestionCard({
     super.key,
     required this.data,
-    required this.orange,
     this.currentUserId,
     required this.questionAuthorId,
     this.onTapReplies,
@@ -129,45 +146,68 @@ class CommunityQuestionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF9F7F2),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFFE8E5DE)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+            spreadRadius: 0,
           ),
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6.r),
-                  child: Image.network(
-                    data.avatarUrl,
-                    width: 30.w,
-                    height: 30.w,
-                    fit: BoxFit.cover,
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryColor.withOpacity(0.15),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.r),
+                    child: Image.network(
+                      data.avatarUrl,
+                      width: 40.w,
+                      height: 40.w,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          Container(
+                        width: 40.w,
+                        height: 40.w,
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradient,
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                          size: 20.sp,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                8.horizontalSpace,
-                Text(
-                  data.userName,
-                  style: FontStyles.body14W700.copyWith(
-                    fontSize: 13.sp,
-                    color: const Color(0xFF3A3A3A),
+                10.horizontalSpace,
+                Expanded(
+                  child: Text(
+                    data.userName,
+                    style: FontStyles.body14W700.copyWith(
+                      fontSize: 15.sp,
+                      color: const Color(0xFF2D2D2D),
+                    ),
                   ),
                 ),
-
-                const Spacer(),
-
-                /// ============ NEW! Edit / Delete Menu ============
                 if (currentUserId != null && currentUserId == questionAuthorId)
                   PopupMenuButton<String>(
                     shape: RoundedRectangleBorder(
@@ -180,10 +220,17 @@ class CommunityQuestionCard extends StatelessWidget {
                         onDelete?.call(data.id);
                       }
                     },
-                    icon: const Icon(
-                      Icons.more_vert,
-                      size: 20,
-                      color: Color(0xFF8C8C8C),
+                    icon: Container(
+                      padding: EdgeInsets.all(6.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.lightBGColor,
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Icon(
+                        Icons.more_vert,
+                        size: 18.sp,
+                        color: AppColors.primaryColor,
+                      ),
                     ),
                     itemBuilder: (context) => [
                       PopupMenuItem(
@@ -200,20 +247,20 @@ class CommunityQuestionCard extends StatelessWidget {
                               height: 28.w,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFFF5F0),
+                                gradient: AppColors.primaryGradient,
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
                               child: const Icon(
                                 Icons.edit_outlined,
                                 size: 16,
-                                color: Color(0xFFFF7A3C),
+                                color: Colors.white,
                               ),
                             ),
                             12.horizontalSpace,
                             Text(
                               'Edit'.tr(),
                               style: FontStyles.body14W500.copyWith(
-                                color: const Color(0xFF3A3A3A),
+                                color: const Color(0xFF2D2D2D),
                                 fontSize: 14.sp,
                               ),
                             ),
@@ -234,7 +281,7 @@ class CommunityQuestionCard extends StatelessWidget {
                               height: 28.w,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFFF0F0),
+                                color: Colors.red.shade50,
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
                               child: const Icon(
@@ -247,7 +294,7 @@ class CommunityQuestionCard extends StatelessWidget {
                             Text(
                               'Delete'.tr(),
                               style: FontStyles.body14W500.copyWith(
-                                color: const Color(0xFF3A3A3A),
+                                color: const Color(0xFF2D2D2D),
                                 fontSize: 14.sp,
                               ),
                             ),
@@ -256,29 +303,33 @@ class CommunityQuestionCard extends StatelessWidget {
                       ),
                     ],
                   ),
-
-                /// ===================== Replies Button =====================
                 InkWell(
-                  borderRadius: BorderRadius.circular(20.r),
+                  borderRadius: BorderRadius.circular(16.r),
                   onTap: () => onTapReplies?.call(data.id),
-                  child: Padding(
+                  child: Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 4.w,
-                      vertical: 4.h,
+                      horizontal: 10.w,
+                      vertical: 6.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(16.r),
                     ),
                     child: Row(
                       children: [
                         SvgImageWidget(
                           image: AppIcons.commentMessage,
-                          width: 18.w,
-                          height: 18.h,
+                          width: 16.w,
+                          height: 16.h,
+                          // color: AppColors.primaryColor,
                         ),
                         4.horizontalSpace,
                         Text(
                           data.repliesCount.toString(),
                           style: FontStyles.body12W400.copyWith(
                             fontSize: 13.sp,
-                            color: const Color(0xFF8C8C8C),
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
@@ -287,19 +338,13 @@ class CommunityQuestionCard extends StatelessWidget {
                 ),
               ],
             ),
-
-            8.verticalSpace,
-
-            const Divider(height: 1, thickness: 0.8, color: Color(0xFFEAEAEA)),
-
-            8.verticalSpace,
-
+            12.verticalSpace,
             Text(
               data.text,
               style: FontStyles.body14W500.copyWith(
-                fontSize: 13.sp,
-                color: const Color(0xFF727272),
-                height: 1.4,
+                fontSize: 14.sp,
+                color: const Color(0xFF616161),
+                height: 1.5,
               ),
             ),
           ],

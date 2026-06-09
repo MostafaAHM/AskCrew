@@ -1,3 +1,4 @@
+import 'package:aflam/core/widgets/animated_loading/animated_loading.dart';
 import 'dart:async';
 import 'package:aflam/core/app_config/app_colors.dart';
 import 'package:aflam/core/app_config/app_roles.dart';
@@ -150,10 +151,7 @@ class _MyWorksSectionState extends State<MyWorksSection> {
         ),
         padding: EdgeInsets.all(16.w),
         child: Center(
-          child: CircularProgressIndicator(
-            color: AppColors.secondaryColor,
-            strokeWidth: 2,
-          ),
+          child: AnimatedLoading(color: AppColors.secondaryColor),
         ),
       );
     }

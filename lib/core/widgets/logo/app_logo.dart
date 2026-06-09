@@ -18,9 +18,13 @@ class AppLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return isSvg
+    final logoPath = isDark ? AppIcons.logoDark : AppIcons.logo;
+    // Check if the logo is a GIF (to use Image.asset instead of SvgPicture)
+    final isGif = logoPath.toLowerCase().endsWith('.gif');
+
+    return (isSvg && !isGif)
         ? SvgImageWidget(
-            image: isDark ? AppIcons.logoDark : AppIcons.logo,
+            image: logoPath,
             width: width ?? 111.w,
             height: height ?? 36.h,
           )
@@ -28,6 +32,7 @@ class AppLogo extends StatelessWidget {
             isDark ? AppIcons.logoDarkPNG : AppIcons.logoPNG,
             width: width ?? 111.w,
             height: height ?? 36.h,
+            fit: BoxFit.contain,
           );
   }
 }
